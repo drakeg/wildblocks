@@ -14,7 +14,7 @@ const platform = process.platform, arch = process.arch;
 const osName = {darwin:'macos',win32:'windows',linux:'linux'}[platform];
 if (!osName || !['x64','arm64'].includes(arch)) throw Error('Unsupported release platform.');
 if (!/^\d+\.\d+\.\d+$/.test(pkg.version)) throw Error('Expected a stable semver package version.');
-const target = `${osName}-${arch}`, nodeVersion = '24.22.1';
+const target = `${osName}-${arch}`, nodeVersion = '24.22.2';
 const stage = join(root, 'build', target), assets = join(root, 'build', 'artifacts');
 await rm(stage, {recursive:true, force:true});
 await mkdir(stage, {recursive:true});

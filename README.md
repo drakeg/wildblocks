@@ -15,7 +15,7 @@ npm test
 npm run desktop
 ```
 
-Use Node.js 24.22.1 for development and release builds. The editable client source lives in `dist/` (it is deliberately tracked, not generated), the Electron wrapper in `desktop/`, and the authoritative server in `server/`. Build native downloads using `npm run package:release`; see [RELEASES.md](RELEASES.md) for automated publication.
+Use Node.js 24.22.2 for development and release builds. The editable client source lives in `dist/` (it is deliberately tracked, not generated), the Electron wrapper in `desktop/`, and the authoritative server in `server/`. Build native downloads using `npm run package:release`; see [RELEASES.md](RELEASES.md) for automated publication.
 
 ## Current game: 0.11.0
 

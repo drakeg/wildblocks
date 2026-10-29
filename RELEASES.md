@@ -36,7 +36,7 @@ Each release includes `SHA256SUMS.txt`. On macOS run `shasum -a 256 <file>`; on 
 
 ## Build and publish
 
-Node.js 24.22.1 and `npm ci` install the pinned build environment. Run `npm run check`, `npm test`, then `npm run package:release` on a supported target OS/architecture. Output goes to `build/artifacts/`. Packaging downloads official Electron and Node runtimes and verifies the Node checksum.
+Node.js 24.22.2 and `npm ci` install the pinned build environment. Run `npm run check`, `npm test`, then `npm run package:release` on a supported target OS/architecture. Output goes to `build/artifacts/`. Packaging downloads official Electron and Node runtimes and verifies the Node checksum.
 
 GitHub Actions tests and builds on five native runner configurations, then publishes a release only after **all** packages succeed. Pushing a new `package.json` version to `main` publishes `v<version>` with client/server downloads, the portable server, and checksums. An existing version's downloads are preserved. A matching version tag or manual Actions run can also trigger the workflow. Failed builds remain visible in Actions and never publish a partial release. To fix an already published package, bump the version rather than replacing its downloads.
 
