@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Wildblocks — your little wilderness</title>
+    <link rel="stylesheet" href="style.css?v=17" />
+  </head>
+  <body class="welcome">
+    <canvas id="view" aria-label="Wildblocks voxel world"></canvas>
+    <header>
+      <div class="brand">
+        <span class="mark">◈</span> WILDBLOCKS
+        <small>craft · gather · explore</small>
+      </div>
+      <div class="world-tag">
+        <i></i><span id="world-name">wander-01</span>
+        <span class="tag">LOCAL</span>
+      </div>
+    </header>
+
+    <section id="welcome" aria-labelledby="welcome-title">
+      <div class="title-brand"><span aria-hidden="true">◈</span><h1 id="welcome-title">WILDBLOCKS</h1><p>Your little wilderness</p></div>
+      <div class="welcome-card">
+        <section id="screen-home" class="start-screen">
+          <button data-screen="solo" class="menu-action">Singleplayer</button>
+          <button data-screen="join" class="menu-action">Multiplayer</button>
+          <button data-screen="host" class="menu-action" id="open-host">Host a Server</button>
+          <button class="quit-game back-button">Quit Game</button><p class="menu-caption">Gather. Craft. Make yourself at home.</p>
+        </section>
+        <section id="screen-solo" class="start-screen" hidden>
+          <h2 tabindex="-1">Singleplayer</h2><p class="muted">Continue your local world. You manage its rules.</p>
+          <label for="welcome-mode">World mode</label><select id="welcome-mode"><option value="survival">Survival · gather & craft</option><option value="creative">Creative · unlimited building</option></select>
+          <button id="solo-enter" class="menu-action">Play World</button>
+          <button data-screen="home" class="back-button">Back</button>
+        </section>
+        <section id="screen-join" class="start-screen" hidden>
+          <h2 tabindex="-1">Multiplayer</h2><p class="muted">Join a friend's world. The administrator sets the game mode.</p>
+          <div id="network-details"><label for="server-address">Server address</label><input id="server-address" placeholder="192.168.1.20:4182" autocomplete="url" spellcheck="false" />
+          <button id="connect-button" class="menu-action">Join Server</button><p id="connection-message" role="status"></p></div>
+          <button data-screen="home" class="back-button">Back</button>
+        </section>
+        <section id="screen-host" class="start-screen" hidden>
+          <h2 tabindex="-1">Host a Server</h2><p class="muted">You are the administrator. This server runs while the app is open.</p>
+          <label for="host-mode">Server world mode</label><select id="host-mode"><option value="survival">Survival · gather & craft</option><option value="creative">Creative · unlimited building</option></select>
+          <label class="check"><input type="checkbox" id="host-lan" /> Allow friends on my local network</label>
+          <details id="host-options"><summary>Advanced settings</summary><label for="host-port">Port</label><input id="host-port" type="number" value="4182" min="1024" max="65535" /></details>
+          <button id="host-start" class="menu-action">Start & Join Server</button><p id="host-note" class="muted"></p><p id="hosting-message" role="status"></p>
+          <p class="muted">For an always-on world, run Wildblocks Dedicated Server on Linux, Windows, or macOS.</p>
+          <button data-screen="home" class="back-button">Back</button>
+        </section>
+        <section id="screen-account" class="start-screen" hidden>
+          <h2 tabindex="-1">Join World</h2><p id="server-mode-label" class="server-badge">Reading server rules…</p><p id="current-server" class="muted"></p>
+          <section id="server-account" hidden><label for="account-name">Player name</label><input id="account-name" autocomplete="username" maxlength="24" placeholder="Your name" />
+          <label for="account-password">Password for this server</label><input type="password" id="account-password" autocomplete="current-password" minlength="10" maxlength="128" placeholder="At least 10 characters" />
+          <button id="login-button" class="menu-action">Sign In & Play</button><button id="register-button">Create Account & Play</button><p class="muted">New here? Create an account on this server using a game-only password.</p></section>
+          <section id="server-connected" hidden><p id="server-who"></p><button id="welcome-enter" class="menu-action">Enter World</button><button id="logout-button">Sign Out</button></section>
+          <p id="network-message" role="status"></p><aside id="hosting-panel" hidden><strong>Your server is running</strong><p id="hosting-addresses"></p><button id="copy-host-address">Copy Friends’ Address</button><button id="stop-hosting">Stop Server & Return</button><p class="muted">Closing this app stops this hosted server.</p></aside><button id="single-player" class="back-button">Back to Main Menu</button>
+        </section>
+      </div><p class="welcome-version">Wildblocks 0.11.0 · Original worlds. Shared adventures.</p>
+    </section>
+    <button id="open-workshop" aria-controls="workshop">
+      <span id="level-summary">Character level 1</span> · Craft & skills
+      <kbd>C</kbd>
+    </button>
+    <aside id="workshop" hidden aria-labelledby="workshop-title">
+      <div class="workshop-heading"><h2 id="workshop-title">Inventory & Crafting</h2><button id="close-workshop" aria-label="Close crafting and return to game">Done · Return to Game</button></div>
+      <div class="craft-layout">
+        <section class="inventory-pane"><h3>Backpack</h3><div id="workshop-bag" aria-label="Inventory slots"></div><p id="equipment"></p>
+          <details><summary>Character & skills</summary><strong id="character-level"></strong><progress id="character-progress" aria-label="Character experience" max="100" value="0"></progress><div id="skill-list"></div></details>
+          <p class="muted">Tools, your best sword, and armor equip automatically. F or left click attacks creatures. C or Escape closes crafting.</p>
+        </section>
+        <section class="craft-pane"><h3>Crafting</h3><p id="station-status" class="muted"></p>
+          <div id="craft-preview"><div id="ingredient-grid" aria-label="Required ingredients"></div><span aria-hidden="true">→</span><div id="craft-output"></div></div>
+          <p id="recipe-description"></p><button id="craft-selected" class="primary">Craft</button><p id="craft-problem" role="status"></p>
+          <label for="recipe-filter">Recipe book</label><select id="recipe-filter"><option value="all">All recipes</option><option value="building">Building</option><option value="tools">Tools</option><option value="survival">Survival gear</option><option value="furniture">Furniture & storage</option><option value="advanced">Advanced crafting</option></select>
+          <div id="recipes" aria-label="Crafting recipes"></div>
+        </section>
+      </div>
+    </aside>
+    <aside id="container-panel" hidden aria-labelledby="container-title"><div class="workshop-heading"><h2 id="container-title">Storage chest</h2><button id="close-container">Done · Return to Game</button></div><p id="storage-note"></p><label for="transfer-count">Move per click</label><select id="transfer-count"><option value="all">Whole stack</option><option value="one">One item</option></select><h3>Container</h3><div id="storage-grid" class="storage-grid"></div><h3>Backpack</h3><div id="storage-bag" class="storage-grid"></div></aside>
+    <div id="crosshair" hidden aria-hidden="true">+</div>
+    <div id="target" hidden></div>
+    <div id="mining" hidden aria-label="Mining progress">
+      <div id="mine-fill"></div>
+    </div>
+    <div id="survival-hud" role="status"></div>
+    <div id="backpack">Backpack · 0 blocks</div>
+    <section id="menu" aria-labelledby="title">
+      <div class="eyebrow">YOUR LITTLE WILDERNESS</div>
+      <h1 id="title">Make room<br />for imagination.</h1>
+      <p>
+        Start with empty hands. Make something new.<br />Build something of your
+        own.
+      </p>
+      <label for="mode">Game mode</label
+      ><select id="mode">
+        <option value="survival">Survival · gather your blocks</option>
+        <option value="creative">Creative · unlimited building</option>
+      </select>
+      <button id="play" class="primary">Enter the world <span>↗</span></button>
+      <button id="back-to-welcome">Save & Main Menu</button><button class="quit-game">Save & Quit Game</button>
+      <div class="keys">
+        <span><kbd>W A S D</kbd> move</span><span><kbd>SPACE</kbd> jump</span
+        ><span><kbd>ESC</kbd> pause</span>
+      </div>
+      <details>
+        <summary>World & settings</summary>
+        <label for="seed">World seed</label>
+        <div class="row">
+          <input id="seed" value="wander-01" maxlength="64" /><button id="new">
+            New world
+          </button>
+        </div>
+        <label for="sensitivity">Mouse sensitivity</label
+        ><input
+          type="range"
+          id="sensitivity"
+          min="0.5"
+          max="2"
+          step="0.1"
+          value="1"
+        />
+        <div class="row">
+          <button id="export">Export world</button
+          ><button id="import">Import world</button
+          ><input
+            type="file"
+            id="file"
+            accept="application/json,.json"
+            hidden
+          />
+        </div>
+      </details>
+      <div class="footnote">
+        Original world & artwork. Single-player needs no account.<br />Desktop
+        keyboard and mouse recommended.
+      </div>
+    </section>
+    <div id="hotbar" aria-label="Backpack slots"></div>
+    <footer>
+      <span id="hint"
+        >Hold left click · mine &nbsp; R / Right click · use &nbsp; Shift-right click · build &nbsp; 1–9 ·
+        materials</span
+      ><span id="saved" role="status">A world of your own</span>
+    </footer>
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="game.js?v=17"></script>
+  </body>
+</html>

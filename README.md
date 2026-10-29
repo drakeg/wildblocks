@@ -4,7 +4,7 @@ An original multiplayer voxel sandbox with survival and creative modes, crafting
 
 **[Download client & server](https://github.com/drakeg/wildblocks/releases/latest)** · [Choose your OS & launch instructions](RELEASES.md) · [Server administration](SERVER.md)
 
-Clients and standalone servers are packaged for Apple Silicon/Intel macOS, Windows x64, and Linux x64/ARM64. Native packages include their runtimes. A smaller portable server is available for systems with Node.js 24.22.1+. No Minecraft or Blizzard installs, resources, accounts, or game licenses are required.
+Clients and standalone servers are packaged for Apple Silicon/Intel macOS, Windows x64, and Linux x64/ARM64. Native packages include their runtimes. A smaller portable server is available for systems with Node.js 24.22.1+. The game uses original code and independently licensed assets.
 
 ## Develop
 
@@ -83,7 +83,7 @@ The shared survival model also runs on the dedicated server. It owns time, creat
 
 ## About
 
-An original voxel sandbox with single-player and small-server multiplayer. No Minecraft code, assets, account, licensed client, or server is required. Three.js (MIT) renders the world; the standalone Mac build uses Electron and includes its third-party notices.
+An original voxel sandbox with single-player and small-server multiplayer. No other game client, account, resources, or server is required. Three.js (MIT) renders the world; the standalone Mac build uses Electron and includes its third-party notices.
 
 ## Play on this Mac
 

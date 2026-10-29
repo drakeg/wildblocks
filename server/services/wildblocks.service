@@ -1,0 +1,22 @@
+[Unit]
+Description=Wildblocks Dedicated Server
+After=network.target
+
+[Service]
+Type=simple
+User=wildblocks
+Group=wildblocks
+WorkingDirectory=/opt/wildblocks
+ExecStart=/usr/bin/node /opt/wildblocks/server/entry.cjs --config /opt/wildblocks/server.config.json
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StateDirectory=wildblocks
+Environment=WILDBLOCKS_DATA=/var/lib/wildblocks
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

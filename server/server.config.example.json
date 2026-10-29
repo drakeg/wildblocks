@@ -1,0 +1,7 @@
+{
+  "mode": "survival",
+  "host": "127.0.0.1",
+  "port": 4182,
+  "seed": "friends-01",
+  "dataDir": "server-data"
+}
