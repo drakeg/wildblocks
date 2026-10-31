@@ -44,7 +44,7 @@ jobs:
         run: npm audit --audit-level=high
       - name: Package client and standalone server
         run: npm run package:release
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: packages-${{ matrix.target }}
           path: build/artifacts/*
@@ -67,7 +67,7 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           cd build
           zip -qr "artifacts/Wildblocks-Server-${VERSION}-portable.zip" Wildblocks-Server-Portable
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: packages-portable
           path: build/artifacts/*
@@ -87,7 +87,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '26.13.0'
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: packages-*
           path: release-assets
