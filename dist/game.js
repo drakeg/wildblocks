@@ -1418,6 +1418,7 @@ $("container-panel").onclick=async e=>{const b=e.target.closest('[data-item]');i
 function useTarget(){if(!hit||hit.distance>5)return false;
   if([27,28].includes(hit.id)||([1,2].includes(hit.id)&&(tools.has('timber-hoe')||mode==='creative'))){
     const action=hit.id===28?'harvest':hit.id===27?'plant':'till';
+    if(action==='harvest'&&drops.items.length+world.pendingDrops.length>2030){toast('Collect nearby drops before harvesting.');return true;}
     if(connected){sendInputNow();network.request('farm',{action}).then(applyServerState).catch(error=>toast(error.message));}
     else{const result=farmAction(world,{bag:gathering,tools,skills:progression},hit,action,mode);if(result.ok){world.flushDrops(drops);refreshNear(hit.x,hit.z);changed();}toast(result.message||result.error);}return true;
   }if([9,15,16,17].includes(hit.id)){openWorkshop();return true;}if(![19,20,24,25].includes(hit.id))return false;if(connected){sendInputNow();network.request('interact',{}).then(applyServerState).catch(e=>toast(e.message));}else if([20,25].includes(hit.id)){if(world.toggleDoor(hit.x,hit.y,hit.z,[position]))changed();else toast('Step out of the doorway first.');}else if(canReachContainer(world,position,hit.x,hit.y,hit.z)){showContainer(containerView(world,hit.x,hit.y,hit.z));}return true;}
