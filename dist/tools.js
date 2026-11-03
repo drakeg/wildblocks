@@ -2,6 +2,7 @@ export const HAND_REACH = 4;
 export const TOOL_REACH = 5;
 export const PLACE_REACH = 5;
 export const TOOLS = [
+  {id:"timber-hoe",name:"Timber hoe",blocks:[],speed:0},
   { id:"iron-pick", name:"Iron pick", blocks:[3,6,8,11,12,15,16,17,18],speed:3,tier:3 },
   { id:"iron-sword", name:"Iron sword", blocks:[],speed:0 },
   { id:"iron-armor", name:"Iron armor", blocks:[],speed:0 },

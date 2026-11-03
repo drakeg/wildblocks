@@ -17,7 +17,23 @@ npm run desktop
 
 Use Node.js 24.22.2 for development and release builds. The editable client source lives in `dist/` (it is deliberately tracked, not generated), the Electron wrapper in `desktop/`, and the authoritative server in `server/`. Build native downloads using `npm run package:release`; see [RELEASES.md](RELEASES.md) for automated publication.
 
-## Current game: 0.11.0
+## Current game: 0.12.0
+
+## Food, farming & hunger (0.12.0)
+
+Survival characters have 20 hunger. It drains gradually during active play (about one point per minute); pausing, signing out, or Creative stops the drain. Health regenerates while well fed (at least 16 hunger), at a small food cost. At zero hunger you slowly lose health, stopping at one health. Existing characters start with full hunger and keep their inventories, worlds, skills and saved locations.
+
+1. Mine **wild meadow** to drop a seed, and walk over it to pick it up. Some **wild canopy** blocks also drop berries. Replaced/player-placed blocks do not generate extra seeds or berries.
+2. Make **Timber boards**, then craft a **Timber hoe** from three boards. Tools equip automatically.
+3. Point at exposed meadow/earth within five blocks and press **R** (or right-click with a non-food item selected) to till it. Press R again to plant one seed from your backpack.
+4. Crops grow through four visual stages with **four minutes of daylight under open sky**. Night and overhead blocks stop growth. Crops are walk-through plants. Up to 256 crops may grow in one world.
+5. Press **R** on a mature crop to drop **three grain and two seeds**. Walk over the drops to collect them. Harvesting earns Farming XP. Removing a young crop returns its seed. Removing its soil uproots the plant.
+6. Near a **furnace**, bake three grain and one timber board of fuel into **two loaves**. A loaf restores eight hunger; raw grain restores two and berries restore three.
+7. Select food in the backpack/hotbar and press **Q** or right-click to eat one item. Full players cannot waste food by eating. Use **R** for farming when food is selected.
+
+Hunger, Farming XP, seeds, food, and crop growth are saved. Crop growth advances while a dedicated server runs, even if nobody is playing; a stopped server does not simulate elapsed crop growth. Multiplayer farming/eating uses the server's inventory, aim, reach and growth state. Harvests are physical pickups; simultaneous requests cannot duplicate them. Creative permits free farming and instant mature crops, with no hunger drain.
+
+
 
 The opening menu has Singleplayer, Multiplayer, and Host a Server. Each action opens its own screen. Joining players see the administrator's world mode and cannot choose another mode. Start & Join Server starts hosting and connects in one action; signing in or creating an account then enters the world directly. An existing signed-in session has an Enter World button.
 

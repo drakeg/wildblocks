@@ -1,4 +1,4 @@
-export const SKILLS = ["Gathering", "Mining", "Woodcutting", "Crafting"];
+export const SKILLS = ["Gathering", "Mining", "Woodcutting", "Crafting", "Farming"];
 export function levelFor(xp, scale = 25) {
   const level = Math.floor(Math.sqrt(xp / scale)) + 1;
   const start = scale * (level - 1) ** 2,
@@ -10,11 +10,11 @@ export class Progression {
     if (
       saved !== undefined &&
       (!Array.isArray(saved) ||
-        saved.length !== SKILLS.length ||
+        ![4,SKILLS.length].includes(saved.length) ||
         saved.some((n) => !Number.isSafeInteger(n) || n < 0 || n > 1e9))
     )
       throw Error("Invalid skill experience.");
-    this.xp = saved ? [...saved] : SKILLS.map(() => 0);
+    this.xp = SKILLS.map((_,i)=>saved?.[i]??0);
   }
   earn(skill, amount) {
     const index = SKILLS.indexOf(skill);
@@ -35,6 +35,7 @@ export class Progression {
   }
 }
 export function skillFor(id) {
+  if([29,31].includes(id))return "Farming";
   return [3,6,8,11,12,15,16,17,18].includes(id)
     ? "Mining"
     : [4,7,9,19,20,22,23,24,25].includes(id)

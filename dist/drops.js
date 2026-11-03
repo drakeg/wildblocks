@@ -50,7 +50,7 @@ export class Drops {
       // Lift items out of a block placed around them, then resolve downward motion in small steps.
       while (
         d.y < HEIGHT + 1 &&
-        world.get(Math.floor(d.x), Math.floor(d.y), Math.floor(d.z))
+        (world.get(Math.floor(d.x), Math.floor(d.y), Math.floor(d.z)) && world.get(Math.floor(d.x), Math.floor(d.y), Math.floor(d.z))!==28)
       )
         d.y = Math.floor(d.y) + 1.17;
       d.vy = Math.max(-20, d.vy - 18 * dt);
@@ -61,7 +61,7 @@ export class Drops {
           floor = Math.floor(next - 0.16);
         if (
           d.vy <= 0 &&
-          (next < 0.16 || world.get(Math.floor(d.x), floor, Math.floor(d.z)))
+          (next < 0.16 || (world.get(Math.floor(d.x), floor, Math.floor(d.z)) && world.get(Math.floor(d.x), floor, Math.floor(d.z))!==28))
         ) {
           d.y = Math.max(0.16, floor + 1.16);
           d.vy = 0;

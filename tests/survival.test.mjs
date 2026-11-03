@@ -6,7 +6,7 @@ const hit = { x: 32, y: 12, z: 32, id: 1, distance: 1 };
 test("new players have no blocks and cannot place for free", () => {
   const g = new Gathering(),
     w = new World();
-  assert.deepEqual(g.counts, Array(27).fill(0));
+  assert.deepEqual(g.counts, Array(33).fill(0));
   assert.equal(g.place(w, 32, 13, 32, 1, { x: 20, y: 20, z: 20 }), false);
   assert.equal(w.get(32, 13, 32), 0);
 });
@@ -42,7 +42,7 @@ test("placement spends exactly one item, rejects player overlap and occupied cel
   assert.equal(g.counts[4], 1);
 });
 test("inventory saves validate counts; legacy worlds grant nothing", () => {
-  assert.deepEqual(new Gathering().counts, Array(27).fill(0));
+  assert.deepEqual(new Gathering().counts, Array(33).fill(0));
   assert.throws(() => new Gathering([0, -1, 0, 0, 0, 0, 0]));
   const g = new Gathering([0, 2, 3, 0, 0, 0, 0]);
   const saved = g.snapshot();

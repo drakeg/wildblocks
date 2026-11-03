@@ -1,3 +1,4 @@
+import { MAX_HUNGER, hungerValue, updateHunger } from "./food.js";
 import { collides, movePlayer, raycast, SIZE, torchPosition } from './world.js';
 export const CYCLE_SECONDS = 720;
 export const MAX_HEALTH = 20;
@@ -13,7 +14,7 @@ export function weapon(tools) {
   return tools.has('iron-sword') ? {name:'Iron sword',damage:10} : tools.has('slate-sword') ? { name: 'Slate sword', damage: 7 } : tools.has('wood-sword') ? { name: 'Timber sword', damage: 4 } : { name: 'Empty hands', damage: 1 };
 }
 export function playerVitals(saved) {
-  return { health: Number.isFinite(saved?.health) ? Math.max(1, Math.min(MAX_HEALTH, saved.health)) : MAX_HEALTH, hurt: 0, attackCooldown: 0, respawns: Number.isSafeInteger(saved?.respawns) && saved.respawns>=0 ? saved.respawns : 0, regen: 0 };
+  return { hunger:hungerValue(saved?.hunger), starving:Number.isFinite(saved?.starving)?Math.max(0,Math.min(10,saved.starving)):0, health: Number.isFinite(saved?.health) ? Math.max(1, Math.min(MAX_HEALTH, saved.health)) : MAX_HEALTH, hurt: 0, attackCooldown: 0, respawns: Number.isSafeInteger(saved?.respawns) && saved.respawns>=0 ? saved.respawns : 0, regen: 0 };
 }
 export function torchesIn(world) { return [...world.torches.values()].map(t=>{const p=torchPosition(t);return {...p,y:p.y+.3};}); }
 export function torchSafe(point, torches) {
@@ -39,11 +40,12 @@ export class Survival {
     }
     const night = dayState(this.elapsed).night;
     for (const p of players) {
+      updateHunger(p.vitals,dt,p.active,mode);
       p.vitals.hurt = Math.max(0, p.vitals.hurt-dt);
       p.vitals.attackCooldown = Math.max(0,p.vitals.attackCooldown-dt);
-      if (!night || mode === 'creative') {
+      if (p.vitals.health<MAX_HEALTH && (mode === 'creative' || (p.active && p.vitals.hunger>=16))) {
         p.vitals.regen += dt;
-        if (p.vitals.regen >= 5) { p.vitals.health = Math.min(MAX_HEALTH,p.vitals.health+1); p.vitals.regen=0; }
+        if (p.vitals.regen >= 5) { p.vitals.health = Math.min(MAX_HEALTH,p.vitals.health+1); p.vitals.regen=0;if(mode!=="creative")p.vitals.hunger=Math.max(0,p.vitals.hunger-.25); }
       }
     }
     if (!night || mode === 'creative') { this.monsters=[]; this.spawnIn=4; return; }
@@ -76,7 +78,7 @@ export class Survival {
         p.vitals.hurt=1; m.attack=1.2; p.vitals.regen=0;
         if(p.vitals.health<=0) {
           Object.assign(p.position,{x:32.5,y:world.surface(32,32)+0.05,z:32.5});
-          p.vitals.health=MAX_HEALTH; p.vitals.hurt=5; p.vitals.respawns++;
+          p.vitals.health=MAX_HEALTH; p.vitals.hunger=MAX_HUNGER;p.vitals.starving=0; p.vitals.hurt=5; p.vitals.respawns++;
         }
       }
     }
