@@ -127,7 +127,8 @@ test("server accounts, isolation, shared world, validation, logout and persisted
     const shared = await request("/api/state?revision=-1", undefined, b.cookie);
     assert(shared.body.world.edits.length > initial);
     assert.equal(shared.body.player.inventory[1], 0);
-    assert.equal(shared.body.drops.length, 1);
+    assert.equal(shared.body.drops.filter(d=>d.id===1).length, 1);
+    assert.equal(shared.body.drops.filter(d=>d.id===31).length, 1);
     await request(
       "/api/input",
       {

@@ -864,3 +864,10 @@ body.welcome #survival-hud { display:none; }
 .slot[data-material="23"] .swatch{background:transparent url("./icons/chair.svg") center/contain no-repeat;box-shadow:none}
 .slot[data-material="24"] .swatch{background:transparent url("./icons/chest.svg") center/contain no-repeat;box-shadow:none}
 .slot[data-material="26"] .swatch{background:transparent url("./icons/glass.svg") center/contain no-repeat;box-shadow:none}
+#survival-hud.hungry{border-color:#e7ae5d;background:#69452add}
+.slot[data-material="27"] .swatch{background:transparent url("./icons/tilled-soil.svg") center/contain no-repeat;box-shadow:none}
+.slot[data-material="28"] .swatch{background:transparent url("./icons/grain.svg") center/contain no-repeat;box-shadow:none}
+.slot[data-material="29"] .swatch{background:transparent url("./icons/grain.svg") center/contain no-repeat;box-shadow:none}
+.slot[data-material="30"] .swatch{background:transparent url("./icons/bread.svg") center/contain no-repeat;box-shadow:none}
+.slot[data-material="31"] .swatch{background:transparent url("./icons/seeds.svg") center/contain no-repeat;box-shadow:none}
+.slot[data-material="32"] .swatch{background:transparent url("./icons/berries.svg") center/contain no-repeat;box-shadow:none}

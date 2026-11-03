@@ -1,3 +1,11 @@
+## 0.12.0 — 2026-11-03
+
+- Added hunger, food consumption, food-gated healing, and gradual starvation with a one-health floor. Hunger stops while inactive or in Creative.
+- Added wild seed/berry drops, craftable Timber hoes, tilling, four crop growth stages, physical grain/seed harvests, and a Farming skill.
+- Added furnace-baked bread, raw grain and berries, original item icons, food tooltips and Q/right-click eating.
+- Added server-validated farming/eating, atomic item consumption, duplicate-harvest protection and saved hunger/crop growth.
+- Migrated old inventories, skills and chest contents without adding starting resources or resetting terrain/locations.
+
 ## 0.11.0 — 2026-10-29
 
 - Added craftable two-block doors, transparent framed windows, timber tables/chairs, glass, and 27-slot shared storage chests.

@@ -1,3 +1,4 @@
+import { CROP_SECONDS } from "./food.js";
 import { generateSettlements, generateOres, SUPPLY_REGEN_MS } from "./settlements.js";
 export const SIZE = 64,
   HEIGHT = 40,
@@ -30,6 +31,12 @@ export const MATERIALS = [
   { name: "Storage chest", color: "#b3884f" },
   { name: "Door upper half", color: "#b1844b", placeable: false, internal:true },
   { name: "Glass", color: "#c5e7e6", placeable: false },
+  { name: "Tilled soil", color: "#71503a", placeable: false },
+  { name: "Grain crop", color: "#76a34d", placeable: false, internal:true },
+  { name: "Grain", color: "#dfbf60", placeable: false },
+  { name: "Bread", color: "#d39a52", placeable: false },
+  { name: "Seeds", color: "#b1a275", placeable: false },
+  { name: "Berries", color: "#b34d64", placeable: false },
 ];
 export function hash(x, z, seed = 0) {
   let n = Math.imul(x, 374761393) ^ Math.imul(z, 668265263) ^ seed;
@@ -44,6 +51,7 @@ export function seedNumber(text) {
 export class World {
   constructor(seed = "wander-01", generation = 3) {
     this.generation = generation;
+    this.crops = new Map();
     this.doors = new Map();
     this.facing = new Map();
     this.containers = new Map();
@@ -92,6 +100,8 @@ export class World {
     )
       return false;
     const old=this.get(x,y,z),key=`${x},${y},${z}`;
+    if(old===28 && id!==28){this.crops.delete(key);if(!this.restoring)this.pendingDrops.push({x,y,z,id:31});}
+    if(old===27 && id!==27 && this.get(x,y+1,z)===28)this.set(x,y+1,z,0);
     if(old===24 && id!==24 && !this.restoring && this.containers.get(key)?.counts.some(n=>n>0))return false;
     if((old===20||old===25)&&id!==old) {
       const by=old===25?y-1:y;
@@ -115,6 +125,13 @@ export class World {
     if(id===20&&!this.doors.has(key))this.doors.set(key,{x,y,z,facing:0,open:false});
     this.revision++;
     return true;
+  }
+  removeCrop(x,y,z,loot=true) {
+    const key=`${x},${y},${z}`,crop=this.crops.get(key);
+    if(!crop||this.get(x,y,z)!==28)return false;
+    this.crops.delete(key);this.raw(x,y,z,0);this.edits.set(key,0);this.dropSupportedTorches(x,y,z);
+    if(loot)for(const [id,count]of [[31,crop.growth>=CROP_SECONDS?2:1],[29,crop.growth>=CROP_SECONDS?3:0]])for(let n=0;n<count;n++)this.pendingDrops.push({x,y,z,id});
+    this.revision++;return true;
   }
   dropSupportedTorches(x,y,z) {
     for(const [key,t] of this.torches)if(t.sx===x&&t.sy===y&&t.sz===z){const p=torchPosition(t);this.pendingDrops.push({x:p.x-.5,y:p.y-.6,z:p.z-.5,id:10});this.torches.delete(key);}
@@ -220,6 +237,7 @@ export class World {
       format: "wildblocks",
       version: 1,
       generation: this.generation,
+      crops: [...this.crops.values()].map(c=>({...c})),
       doors: [...this.doors.values()].map(d=>({...d})),
       facing: [...this.facing].map(([key,facing])=>({key,facing})),
       containers: [...this.containers.values()].map(c=>({...c,counts:[...c.counts],order:[...c.order]})),
@@ -258,9 +276,14 @@ export class World {
         throw Error("The world contains an invalid block edit.");
     }
     w.restoring=false;
+    if(save.crops!==undefined){
+      if(!Array.isArray(save.crops)||save.crops.length>256)throw Error('Invalid crops.');
+      for(const c of save.crops){const key=c&&`${c.x},${c.y},${c.z}`;if(!c||![c.x,c.y,c.z].every(Number.isInteger)||w.get(c.x,c.y,c.z)!==28||w.get(c.x,c.y-1,c.z)!==27||!Number.isFinite(c.growth)||c.growth<0||c.growth>CROP_SECONDS||w.crops.has(key))throw Error('Invalid crop state.');w.crops.set(key,{x:c.x,y:c.y,z:c.z,growth:c.growth});}
+    }
+    for(const [key,id]of w.edits)if(id===28&&!w.crops.has(key))throw Error('Crop is missing its growth state.');
     if(save.doors!==undefined){if(!Array.isArray(save.doors)||save.doors.length>2048)throw Error("Invalid doors.");for(const d of save.doors){if(!d||w.get(d.x,d.y,d.z)!==20||w.get(d.x,d.y+1,d.z)!==25||!Number.isInteger(d.facing)||d.facing<0||d.facing>3||typeof d.open!=="boolean")throw Error("Invalid door state.");w.doors.set(`${d.x},${d.y},${d.z}`,{...d});}}
     if(save.facing!==undefined){if(!Array.isArray(save.facing)||save.facing.length>SIZE*SIZE*HEIGHT)throw Error("Invalid furniture orientation.");for(const r of save.facing){if(!r||typeof r.key!=="string"||!/^\d+,\d+,\d+$/.test(r.key)||!Number.isInteger(r.facing)||r.facing<0||r.facing>3)throw Error("Invalid furniture orientation.");w.facing.set(r.key,r.facing);}}
-    if(save.containers!==undefined){if(!Array.isArray(save.containers)||save.containers.length>2048)throw Error("Invalid storage.");for(const c of save.containers){const actual=c&&w.ensureContainer(c.x,c.y,c.z);if(!actual||!Array.isArray(c.counts)||c.counts.length!==MATERIALS.length||c.counts[0]!==0||c.counts.some((n,id)=>!Number.isInteger(n)||n<0||n>9999||(id===19||id===25)&&n>0)||!Array.isArray(c.order)||c.order.some(id=>!Number.isInteger(id)||id<1||id>=MATERIALS.length)||new Set(c.order).size!==c.order.length)throw Error("Invalid chest contents.");actual.counts=[...c.counts];actual.order=[...c.order].filter(id=>actual.counts[id]>0);for(let id=1;id<actual.counts.length;id++)if(actual.counts[id]>0&&!actual.order.includes(id))actual.order.push(id);}}
+    if(save.containers!==undefined){if(!Array.isArray(save.containers)||save.containers.length>2048)throw Error("Invalid storage.");for(const c of save.containers){const actual=c&&w.ensureContainer(c.x,c.y,c.z);if(!actual||!Array.isArray(c.counts)||![27,MATERIALS.length].includes(c.counts.length)||c.counts[0]!==0||c.counts.some((n,id)=>!Number.isInteger(n)||n<0||n>9999||(id===19||id===25)&&n>0)||!Array.isArray(c.order)||c.order.some(id=>!Number.isInteger(id)||id<1||id>=MATERIALS.length)||new Set(c.order).size!==c.order.length)throw Error("Invalid chest contents.");actual.counts=Array.from({length:MATERIALS.length},(_,i)=>c.counts[i]??0);actual.order=[...c.order].filter(id=>actual.counts[id]>0);for(let id=1;id<actual.counts.length;id++)if(actual.counts[id]>0&&!actual.order.includes(id))actual.order.push(id);}}
     for(const row of legacyTorches)w.set(...row);
     if(save.torches!==undefined) {
       if(!Array.isArray(save.torches)||save.torches.length>2048)throw Error("Invalid attached torches.");
@@ -299,7 +322,7 @@ export function collides(w, p) {
       for (let z = Math.floor(p.z - 0.3); z <= Math.floor(p.z + 0.3); z++)
         if (w.get(x,y,z)) {
           const id=w.get(x,y,z);
-          if(id===20||id===25)continue;
+          if(id===20||id===25||id===28)continue;
           else if(id===21){if(overlapsBounds(p,windowBounds(w,x,y,z)))return true;}
           else if(overlapsBlock(p,x,y,z))return true;
         }

@@ -1,6 +1,8 @@
+import { eatFood, vitalsSnapshot } from "../dist/food.js";
+import { farmAction, updateCrops } from "../dist/farming.js";
 import { canReachContainer, containerView, transferContainer, INTERACT_REACH } from "../dist/interactions.js";
 import { resumePlayer, validPlayerPosition, validDirection, viewDirection } from "../dist/player-state.js";
-import { Survival, playerVitals } from "../dist/survival.js";
+import { Survival, playerVitals, dayState } from "../dist/survival.js";
 import http from "node:http";
 import https from "node:https";
 import {
@@ -117,7 +119,7 @@ export async function startServer({
         tools: [...u.tools],
         position: u.position,
         direction: u.direction,
-        vitals: { health:u.vitals.health, respawns:u.vitals.respawns },
+        vitals: vitalsSnapshot(u.vitals),
       })),
     };
     writeFileSync(savePath + ".tmp", JSON.stringify(data), { mode: 0o600 });
@@ -155,7 +157,7 @@ export async function startServer({
       drops: drops.snapshot(),
       player: {
         name: u.name,
-        vitals: { health:u.vitals.health, respawns:u.vitals.respawns },
+        vitals: vitalsSnapshot(u.vitals),
         position: u.position,
         direction: u.direction,
         inventory: u.bag.snapshot(),
@@ -386,6 +388,18 @@ export async function startServer({
           if(path==="/api/checkpoint")save();
           return json(res, 200, { ok: true });
         }
+        if(path==="/api/eat"&&req.method==="POST") {
+          const input=await body(req);if(!u.active)fail(409,"Return to the game before eating.");
+          const result=eatFood(u.bag,u.vitals,input.id,gameMode);if(!result.ok)fail(409,result.error);
+          dirty=true;save();return json(res,200,state(u));
+        }
+        if(path==="/api/farm"&&req.method==="POST") {
+          const input=await body(req);if(!u.active)fail(409,"Return to the game before farming.");
+          if(drops.items.length+world.pendingDrops.length>2030)fail(409,"Collect nearby drops before harvesting.");
+          const hit=raycast(world,{x:u.position.x,y:u.position.y+1.62,z:u.position.z},u.direction,5);
+          const result=farmAction(world,u,hit,input.action,gameMode);if(!result.ok)fail(409,result.error);
+          world.flushDrops(drops);revision++;dirty=true;save();return json(res,200,state(u));
+        }
         if(path==="/api/interact"&&req.method==="POST") {
           await body(req);
           const hit=raycast(world,{x:u.position.x,y:u.position.y+1.62,z:u.position.z},u.direction,INTERACT_REACH);
@@ -535,6 +549,7 @@ export async function startServer({
       if (now-u.lastInput>700 || now-u.lastSeen>5000) u.active=false;
       return u;
     }), gameMode);
+    if(updateCrops(world,.05,dayState(survival.elapsed).daylight))revision++;
     dirty = true;
     drops.update(world, 0.05, { x: -100, y: 0, z: -100 }, false, () => false);
     for (const u of users.values()) {
@@ -555,12 +570,12 @@ export async function startServer({
         world,
         hit,
         0.05,
-        u.holding && (gameMode === "creative" || drops.items.length < 2048),
+        u.holding && (gameMode === "creative" || drops.items.length + world.pendingDrops.length < 2030),
         gameMode,
         u.tools,
       );
       if (mined) {
-        if (gameMode !== "creative" && mined.id!==19) drops.add(mined);
+        if (gameMode !== "creative" && ![19,28].includes(mined.id)) drops.add(mined);
         world.flushDrops(drops);
         revision++;
         dirty = true;

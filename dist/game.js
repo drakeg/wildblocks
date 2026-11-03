@@ -1,3 +1,5 @@
+import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
+import { farmAction, updateCrops, cropStage } from "./farming.js";
 import { canReachContainer, containerView, transferContainer } from "./interactions.js";
 import { resumePlayer, playerSnapshot, viewDirection, directionView } from "./player-state.js";
 import { Survival, playerVitals, dayState, weapon, protection, MAX_HEALTH, torchesIn } from "./survival.js";
@@ -193,9 +195,11 @@ function buildChunk(cx, cz) {
       for (let y = 0; y < HEIGHT; y++) {
         const id = world.get(x, y, z);
         if (!id || [20,25].includes(id)) continue;
-        if ([9,15,16,17,19,21,22,23,24].includes(id)) {
+        if ([9,15,16,17,19,21,22,23,24,27,28].includes(id)) {
           const legs=[[.07,0,.07,.12,.7,.12,.8],[.81,0,.07,.12,.7,.12,.8],[.07,0,.81,.12,.7,.12,.8],[.81,0,.81,.12,.7,.12,.8]];
-          const pieces = id===21 ? [[0,0,.43,.1,1,.14,.8],[.9,0,.43,.1,1,.14,.8],[.1,0,.43,.8,.1,.14,.8],[.1,.9,.43,.8,.1,.14,.8],[.48,.1,.43,.04,.8,.14,.8]] : id===22 ? [...legs,[0,.7,0,1,.14,1,1.15]] : id===23 ? [...legs,[0,.45,0,1,.13,1,1.1],[0,.58,.85,1,.42,.12,.9]] : id===24 ? [[.04,0,.06,.92,.72,.88,.85],[.02,.72,.04,.96,.17,.92,1.15],[.43,.5,.025,.14,.24,.05,.45]] : id===15 ? [[0,0,0,1,1,1,.9],[.15,.2,-.015,.7,.5,.02,.2],[.1,.12,-.025,.8,.08,.03,1.3]] : id===16 ? [[.2,0,.2,.6,.18,.6,.8],[.35,.18,.35,.3,.45,.3,.75],[.04,.6,.1,.92,.3,.8,1.2],[.85,.6,.3,.2,.2,.35,1]] : id===17 ? [[.05,0,.05,.9,.35,.9,.8],[.12,.35,.42,.76,.42,.12,1.3]] : id===19 ? [[0,0,0,1,1,1,.9],[0,.18,-.01,1,.08,.02,.45],[0,.72,-.01,1,.08,.02,.45],[.15,0,-.02,.1,1,.02,.6],[.75,0,-.02,.1,1,.02,.6]] : [
+          const stage=cropStage(world.crops.get(`${x},${y},${z}`)?.growth||0),height=.2+stage*.23;
+          const cropPieces=[.22,.5,.76].flatMap(px=>[[px,0,.3,.055,height,.055,.8],[px-.07,height*.65,.24,.2,.08,.16,1.2]]);
+          const pieces = id===28 ? cropPieces : id===27 ? [[0,0,0,1,.96,1,1],...[.1,.4,.7].map(px=>[px,.96,0,.08,.04,1,.65])] : id===21 ? [[0,0,.43,.1,1,.14,.8],[.9,0,.43,.1,1,.14,.8],[.1,0,.43,.8,.1,.14,.8],[.1,.9,.43,.8,.1,.14,.8],[.48,.1,.43,.04,.8,.14,.8]] : id===22 ? [...legs,[0,.7,0,1,.14,1,1.15]] : id===23 ? [...legs,[0,.45,0,1,.13,1,1.1],[0,.58,.85,1,.42,.12,.9]] : id===24 ? [[.04,0,.06,.92,.72,.88,.85],[.02,.72,.04,.96,.17,.92,1.15],[.43,.5,.025,.14,.24,.05,.45]] : id===15 ? [[0,0,0,1,1,1,.9],[.15,.2,-.015,.7,.5,.02,.2],[.1,.12,-.025,.8,.08,.03,1.3]] : id===16 ? [[.2,0,.2,.6,.18,.6,.8],[.35,.18,.35,.3,.45,.3,.75],[.04,.6,.1,.92,.3,.8,1.2],[.85,.6,.3,.2,.2,.35,1]] : id===17 ? [[.05,0,.05,.9,.35,.9,.8],[.12,.35,.42,.76,.42,.12,1.3]] : id===19 ? [[0,0,0,1,1,1,.9],[0,.18,-.01,1,.08,.02,.45],[0,.72,-.01,1,.08,.02,.45],[.15,0,-.02,.1,1,.02,.6],[.75,0,-.02,.1,1,.02,.6]] : [
             [0, 0.76, 0, 1, 0.24, 1, 1.2],
             [0.06, 0, 0.06, 0.16, 0.76, 0.16, 0.8],
             [0.78, 0, 0.06, 0.16, 0.76, 0.16, 0.8],
@@ -208,7 +212,7 @@ function buildChunk(cx, cz) {
             for (const f of faces)
               for (const i of [0, 1, 2, 0, 2, 3]) {
                 const v = f.v[i],
-                  c = palette[id===21?7:id];
+                  c = palette[id===21?7:id===28&&stage===3?29:id];
                 positions.push(
                   ...furnitureVertex(x,y,z,bx+v[0]*bw,by+v[1]*bh,bz+v[2]*bd,id),
                 );
@@ -223,7 +227,7 @@ function buildChunk(cx, cz) {
         }
         for (const f of faces) {
           const neighbor = world.get(x + f.n[0], y + f.n[1], z + f.n[2]);
-          if (neighbor && ![9,16,17,20,21,22,23,24,25].includes(neighbor)) continue;
+          if (neighbor && ![9,16,17,20,21,22,23,24,25,28].includes(neighbor)) continue;
           const shade =
             f.light * (0.93 + hash(x + y * 13, z, world.number) * 0.14);
           const color = [11,12].includes(id) ? palette[3] : palette[id];
@@ -329,7 +333,7 @@ function snapshot() {
     player: playerSnapshot(position,yaw,pitch),
     mode,
     survival: survival.snapshot(),
-    vitals: { health: vitals.health, respawns: vitals.respawns },
+    vitals: vitalsSnapshot(vitals),
     inventory: gathering.snapshot(),
     bag: gathering.layout(),
     drops: drops.snapshot(),
@@ -365,7 +369,7 @@ function inventoryUI() {
         ? `${m.name}: ${mode === "creative" ? "unlimited" : gathering.counts[id] + " collected"}`
         : `Empty slot ${i + 1}`,
     );
-    b.title = m?.name ?? "";
+    b.title = FOOD[id] ? `${m.name} · restores ${FOOD[id].nutrition} hunger · Q to eat` : m?.name ?? "";
     if (id)
       b.innerHTML = `<small>${i + 1}</small><span class="swatch" aria-hidden="true" style="--material-color:${m.color}"></span><b class="count">${mode === "creative" ? "∞" : gathering.counts[id]}</b>`;
     b.onclick = () => select(i);
@@ -374,7 +378,7 @@ function inventoryUI() {
   $("backpack").textContent =
     mode === "creative"
       ? "Creative · unlimited blocks"
-      : `Backpack · ${items.length}/${capacity} slots · ${gathering.counts.reduce((a, b) => a + b, 0)} blocks`;
+      : `Backpack · ${items.length}/${capacity} slots · ${gathering.counts.reduce((a, b) => a + b, 0)} items`;
   workshopUI();
 }
 function nearbyStations(){return [15,16,17].filter(id=>nearStation(world,position,id));}
@@ -404,7 +408,7 @@ function workshopUI() {
     return `<button class="slot ${id?'':'empty'}" data-bag-slot="${i}" data-material="${id||0}" aria-label="${id?MATERIALS[id].name+': '+gathering.counts[id]:'Empty slot '+(i+1)}">${id?`<span class="swatch" aria-hidden="true"></span><b class="count">${gathering.counts[id]}</b>`:''}</button>`;
   }).join('');
   const category = $("recipe-filter").value;
-  const visible = RECIPES.filter(r => category === 'all' || (category==='advanced' ? r.category==='advanced' : category==='survival' ? ['torch','wood-sword','slate-sword','woven-armor','slate-armor','slate-helmet','backpack'].includes(r.key) : category==='tools' ? !!r.tool && !r.tool.includes('sword') && !r.tool.includes('armor') && !r.tool.includes('helmet') : !!r.output && r.key!=='torch'));
+  const visible = RECIPES.filter(r => category === 'all' || (category==='advanced' ? r.category==='advanced' : category==='survival' ? ['torch','wood-sword','slate-sword','woven-armor','slate-armor','slate-helmet','backpack'].includes(r.key) : category==='farming' ? r.category==='farming' : category==='furniture' ? r.category==='furniture' : category==='tools' ? !!r.tool && !r.tool.includes('sword') && !r.tool.includes('armor') && !r.tool.includes('helmet') : !!r.output && r.key!=='torch'));
   if(!visible.some(r=>r.key===selectedRecipe)) selectedRecipe=visible[0]?.key;
   $("recipes").innerHTML = visible.map(r => {
     const problem = craftProblem(r,gathering,tools,mode,nearCraftingTable(world,position),progression,nearbyStations());
@@ -423,8 +427,8 @@ function workshopUI() {
   $("craft-selected").disabled=!!problem;
   $("craft-selected").textContent='Craft '+recipe.name;
 }
-function materialIcon(id) { return ['','meadow','earth','slate','honeywood','canopy','terracotta','timber-boards','slate-bricks','crafting-table','torch','iron-ore','starstone','iron-ingot','starsteel','furnace','anvil','stonecutter','reinforced-bricks','supply-crate','door','window','table','chair','chest','door','glass'][id]; }
-function recipeIcon(r) { return r.output?materialIcon(r.output.id):r.tool?.includes('sword')?'sword':r.tool?.includes('armor')||r.tool?.includes('helmet')?'armor':r.expand?'backpack':'tools'; }
+function materialIcon(id) { return ['','meadow','earth','slate','honeywood','canopy','terracotta','timber-boards','slate-bricks','crafting-table','torch','iron-ore','starstone','iron-ingot','starsteel','furnace','anvil','stonecutter','reinforced-bricks','supply-crate','door','window','table','chair','chest','door','glass','tilled-soil','grain','grain','bread','seeds','berries'][id]; }
+function recipeIcon(r) { if(r.key==='timber-hoe')return 'hoe';return r.output?materialIcon(r.output.id):r.tool?.includes('sword')?'sword':r.tool?.includes('armor')||r.tool?.includes('helmet')?'armor':r.expand?'backpack':'tools'; }
 $("recipe-filter").onchange=workshopUI;
 $("workshop-bag").onclick=e=>{const slot=e.target.closest('[data-bag-slot]');if(slot)select(Number(slot.dataset.bagSlot));};
 $("recipes").onclick=e=>{const b=e.target.closest('[data-recipe]');if(b){selectedRecipe=b.dataset.recipe;workshopUI();}};
@@ -539,7 +543,7 @@ function enterFallback() {
   active = true;
   syncUI();
   $("hint").textContent =
-    "WASD · move   Arrows · look   Space · jump   Hold click / E · mine   Right click · build   C · inventory/craft   F · attack";
+    "WASD · move   Arrows · look   Space · jump   Hold click / E · mine   Right click · build   C · inventory/craft   F · attack   R · farm/use   Q · eat selected food";
   toast("Arrow keys look around when mouse capture is unavailable.");
 }
 function pause() {
@@ -597,6 +601,7 @@ addEventListener("keydown", (e) => {
     }
     return;
   }
+  if (e.code === "KeyQ") {e.preventDefault();if(!e.repeat)eatSelected();return;}
   if (e.code === "KeyR") {e.preventDefault();if(!e.repeat)useTarget();return;}
   if (e.code === "KeyF") { e.preventDefault(); attackCreature(); return; }
   if (e.code === "KeyC") {
@@ -660,6 +665,7 @@ let diagnosticTime = 0,
   pickupXP = 0;
 const pickupTotals = new Map();
 function interact(button) {
+  if(active&&button===2&&!keys.has("ShiftLeft")&&FOOD[selectedMaterial()]){eatSelected();return;}
   if (!active || !hit) return;
   if (hit.distance > (button===2 ? (mode==="creative"?7:PLACE_REACH) : miningRule(hit, tools, mode).reach)) {
     toast("Move closer to reach that block.");
@@ -844,6 +850,7 @@ function frame(time) {
     if (!connected) {
       const respawns = vitals.respawns;
       survival.update(world,dt,[{position,tools,vitals,active}],mode);
+      if(updateCrops(world,dt,dayState(survival.elapsed).daylight)){rebuild();changed();}
       if(vitals.respawns!==respawns){velocity.y=0;toast("You were rescued at camp. Your inventory is safe.");}
     }
     if (fallback) {
@@ -920,13 +927,13 @@ function frame(time) {
           world,
           hit,
           dt,
-          (mode === "creative" || drops.items.length < 2048) &&
+          (mode === "creative" || drops.items.length + world.pendingDrops.length < 2030) &&
             (miningHeld || keys.has("KeyE")),
           mode,
           tools,
         );
     if (mined) {
-      if (mode !== "creative" && mined.id!==19) drops.add(mined);
+      if (mode !== "creative" && ![19,28].includes(mined.id)) drops.add(mined);
       world.flushDrops(drops);
       refreshNear(mined.x, mined.z);
       changed();
@@ -944,7 +951,7 @@ function frame(time) {
     if (hit) {
       outline.position.set(hit.x + 0.5, hit.y + 0.5, hit.z + 0.5);
       $("target").textContent =
-        `${MATERIALS[hit.id].name}${[19,24].includes(hit.id)?" · R / right-click to open":hit.id===20?" · R / right-click to open or close":""} · ${hit.distance > rule.reach ? "Out of reach" : !rule.allowed ? "Requires " + (hit.id===12?"an Iron pick":hit.id===11?"a Slate or Iron pick":"a pick") : rule.name}`;
+        `${MATERIALS[hit.id].name}${hit.id===28?(world.crops.get(`${hit.x},${hit.y},${hit.z}`)?.growth>=CROP_SECONDS?" · R to harvest":" · Growing · needs daylight & open sky"):hit.id===27?" · R to plant seeds":""}${[19,24].includes(hit.id)?" · R / right-click to open":hit.id===20?" · R / right-click to open or close":""} · ${hit.distance > rule.reach ? "Out of reach" : !rule.allowed ? "Requires " + (hit.id===12?"an Iron pick":hit.id===11?"a Slate or Iron pick":"a pick") : rule.name}`;
     } else $("target").textContent = "";
   } else {
     outline.visible = false;
@@ -1394,8 +1401,9 @@ function renderSurvival(time){
   }
   const town=world.towns.find(t=>Math.hypot(t.x-position.x,t.z-position.z)<15);
   const location=town?" · "+town.name:"";
-  const text=mode==='creative'?`${day.label} · Creative · no hostile creatures`:`${day.label} · Health ${vitals.health}/${MAX_HEALTH} · Armor ${Math.round(protection(tools)*100)}% · ${weapon(tools).name}${location}`;
+  const text=mode==='creative'?`${day.label} · Creative · no hostile creatures`:`${day.label} · Health ${vitals.health}/${MAX_HEALTH} · Hunger ${Math.ceil(vitals.hunger??MAX_HUNGER)}/${MAX_HUNGER} · Armor ${Math.round(protection(tools)*100)}% · ${weapon(tools).name}${location}`;
   if($('survival-hud').textContent!==text)$('survival-hud').textContent=text;
+  $('survival-hud').classList.toggle('hungry',mode!=='creative'&&vitals.hunger<5);
   $('survival-hud').classList.toggle('hurt',vitals.hurt>0&&vitals.hurt<2);
 }
 
@@ -1407,7 +1415,13 @@ function containerUI(){if(!openStorage)return;const slot=(id,count,direction)=>`
 function closeContainer(){$("container-panel").hidden=true;openStorage=null;$("play").onclick();}
 $("close-container").onclick=closeContainer;
 $("container-panel").onclick=async e=>{const b=e.target.closest('[data-item]');if(!b||!openStorage)return;const input={x:openStorage.x,y:openStorage.y,z:openStorage.z,id:Number(b.dataset.item),direction:b.dataset.direction,count:$("transfer-count").value==='all'?9999:1};try{if(connected){applyServerState(await network.request('container',input));}else{if(!canReachContainer(world,position,input.x,input.y,input.z))throw Error('Move closer to the container.');const result=transferContainer(world,gathering,input);if(result.error)throw Error(result.error);openStorage=containerView(world,input.x,input.y,input.z);containerUI();inventoryUI();changed();}}catch(error){toast(error.message);}};
-function useTarget(){if(!hit||hit.distance>5)return false;if([9,15,16,17].includes(hit.id)){openWorkshop();return true;}if(![19,20,24,25].includes(hit.id))return false;if(connected){sendInputNow();network.request('interact',{}).then(applyServerState).catch(e=>toast(e.message));}else if([20,25].includes(hit.id)){if(world.toggleDoor(hit.x,hit.y,hit.z,[position]))changed();else toast('Step out of the doorway first.');}else if(canReachContainer(world,position,hit.x,hit.y,hit.z)){showContainer(containerView(world,hit.x,hit.y,hit.z));}return true;}
+function useTarget(){if(!hit||hit.distance>5)return false;
+  if([27,28].includes(hit.id)||([1,2].includes(hit.id)&&(tools.has('timber-hoe')||mode==='creative'))){
+    const action=hit.id===28?'harvest':hit.id===27?'plant':'till';
+    if(action==='harvest'&&drops.items.length+world.pendingDrops.length>2030){toast('Collect nearby drops before harvesting.');return true;}
+    if(connected){sendInputNow();network.request('farm',{action}).then(applyServerState).catch(error=>toast(error.message));}
+    else{const result=farmAction(world,{bag:gathering,tools,skills:progression},hit,action,mode);if(result.ok){world.flushDrops(drops);refreshNear(hit.x,hit.z);changed();}toast(result.message||result.error);}return true;
+  }if([9,15,16,17].includes(hit.id)){openWorkshop();return true;}if(![19,20,24,25].includes(hit.id))return false;if(connected){sendInputNow();network.request('interact',{}).then(applyServerState).catch(e=>toast(e.message));}else if([20,25].includes(hit.id)){if(world.toggleDoor(hit.x,hit.y,hit.z,[position]))changed();else toast('Step out of the doorway first.');}else if(canReachContainer(world,position,hit.x,hit.y,hit.z)){showContainer(containerView(world,hit.x,hit.y,hit.z));}return true;}
 const windowMeshes=new Map(),paneGeometry=new THREE.BoxGeometry(.8,.8,.025),paneMaterial=new THREE.MeshStandardMaterial({color:0xbde6e9,transparent:true,opacity:.24,roughness:.15,depthWrite:false});
 const doorMeshes=new Map(),doorGeometry=new THREE.BoxGeometry(1,2,.12),doorMaterial=new THREE.MeshStandardMaterial({color:0xa87840}),knobGeometry=new THREE.BoxGeometry(.09,.09,.1),knobMaterial=new THREE.MeshStandardMaterial({color:0xe4c46e});
 let windowWorld=null,windowVersion=-1;
@@ -1418,3 +1432,9 @@ function renderDoors(){
   windowWorld=world;windowVersion=world.revision;
  }
 for(const [key,mesh]of doorMeshes)if(!world.doors.has(key)){scene.remove(mesh);doorMeshes.delete(key);}for(const [key,d]of world.doors){let group=doorMeshes.get(key);if(!group){group=new THREE.Group();const panel=new THREE.Mesh(doorGeometry,doorMaterial);panel.position.set(.5,1,0);const knob=new THREE.Mesh(knobGeometry,knobMaterial);knob.position.set(.86,1,.1);group.add(panel,knob);scene.add(group);doorMeshes.set(key,group);}const a=d.facing*Math.PI/2;group.position.set(d.x+.5-Math.cos(a)*.5,d.y,d.z+.5-Math.sin(a)*.5);group.rotation.y=-a-(d.open?Math.PI/2:0);}}
+
+function eatSelected(){
+ if(!active)return;
+ const id=selectedMaterial();if(connected){sendInputNow();network.request('eat',{id}).then(state=>{applyServerState(state);toast('Food eaten.');}).catch(error=>toast(error.message));}
+ else{const result=eatFood(gathering,vitals,id,mode);if(result.ok){inventoryUI();changed();toast(result.name+' eaten.');}else toast(result.error);}
+}

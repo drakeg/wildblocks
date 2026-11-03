@@ -1,5 +1,5 @@
 import { miningRule } from "./tools.js";
-import { MATERIALS, overlapsBlock } from "./world.js";
+import { MATERIALS, overlapsBlock, hash } from "./world.js";
 export const MINING_SECONDS = [
   Infinity,
   1.1,
@@ -28,13 +28,14 @@ export const MINING_SECONDS = [
   2.8,
   2.2,
   Infinity,
+  1.25, .35, Infinity, Infinity, Infinity, Infinity,
 ];
 export class Gathering {
   constructor(saved, layout) {
     if (
       saved !== undefined &&
       (!Array.isArray(saved) ||
-        ![7, 9, 10, 11, 20, MATERIALS.length].includes(saved.length) ||
+        ![7, 9, 10, 11, 20, 27, MATERIALS.length].includes(saved.length) ||
         saved.some((n) => !Number.isInteger(n) || n < 0 || n > 9999) ||
         saved[0] !== 0)
     )
@@ -136,13 +137,18 @@ export class Gathering {
       const point=world.removeTorch(hit.torchKey);this.reset();
       return point?{x:point.x-.5,y:point.y-.6,z:point.z-.5,id:10}:null;
     }
+    if(id===28){world.removeCrop(x,y,z,mode!=="creative");this.reset();return {x,y,z,id};}
+    if(mode!=="creative"&&!world.edits.has(`${x},${y},${z}`)){
+      if(id===1)world.pendingDrops.push({x,y,z,id:31});
+      if(id===5&&hash(x+y*13,z,world.number)<.4)world.pendingDrops.push({x,y,z,id:32});
+    }
     if(id===19)world.harvestSupply(x,y,z,Date.now(),mode!=="creative");
     if (!world.set(x, y, z, 0)) {
       this.reset();
       return null;
     }
     this.reset();
-    return { x, y, z, id };
+    return { x, y, z, id:id===27?2:id };
   }
   placeTorch(world, hit, mode="survival") {
     if(!hit||hit.torchKey||(mode!=="creative"&&this.counts[10]<1))return false;

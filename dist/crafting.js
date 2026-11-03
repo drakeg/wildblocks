@@ -19,6 +19,8 @@ export function nearStation(world, position, id=9) {
 }
 export function nearCraftingTable(world,position){return nearStation(world,position,9);}
 export const RECIPES = [
+  {key:"timber-hoe",name:"Timber hoe",description:"R on exposed meadow/earth tills a farm plot. R again plants a seed from your backpack.",cost:[[7,3]],tool:"timber-hoe",category:"farming"},
+  {key:"bread",name:"Bake bread",description:"Bake three grain with one timber board as fuel near a furnace. Two loaves restore eight hunger each.",cost:[[29,3],[7,1]],output:{id:30,count:2},stationId:15,category:"farming"},
   {key:"door",name:"Timber door",description:"Two blocks tall. Right-click or R opens/closes it. Needs a clear space above and a solid floor.",cost:[[7,6]],output:{id:20,count:1},station:true,category:"furniture"},
   {key:"glass",name:"Glass",description:"Fuse earth and crushed slate with timber fuel in a furnace. Crafting level 3.",cost:[[2,2],[3,1],[7,1]],output:{id:26,count:2},stationId:15,level:3,category:"furniture"},
   {key:"window",name:"Framed windows",description:"Two transparent glass windows with timber frames.",cost:[[26,2],[7,2]],output:{id:21,count:2},category:"furniture"},

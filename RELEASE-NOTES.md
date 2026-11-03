@@ -1,12 +1,14 @@
-Original voxel survival and creative sandbox with self-hosted multiplayer.
+Food, farming, and hunger arrive in Wildblocks 0.12.0.
 
-- Gather dropped resources, craft tools/weapons/armor, and build your own world.
-- Craft doors, glass windows, tables, chairs, and shared 27-slot storage chests.
-- R/right-click opens doors and loot/storage containers; Shift-right-click builds against them.
-- Day/night cycles, nighttime monsters, torches, character/skill progression, and generated towns.
-- Persistent player location, inventories, world edits, loot and chest contents.
-- Singleplayer, joining friends, in-client hosting, and a separate dedicated server.
+- Mine wild meadow for seeds and some wild canopy for berries; walk over drops to collect them.
+- Craft a Timber hoe. R tills exposed soil, plants seeds, and harvests mature grain.
+- Crops grow in daylight under open sky. Harvests drop three grain and two seeds, and award Farming XP.
+- Bake grain and timber fuel into bread near a furnace. Select food and press Q or right-click to eat.
+- Survival hunger drains only during active play. Well-fed players regenerate health; starvation stops at one health. Creative has no hunger drain.
+- Worlds, player locations, chest contents and existing inventories are preserved. Hunger and crop growth now persist too.
 
-Download a **Client** package for playing or a matching **Server** package for hosting independently. Standalone packages include runtimes. The smaller **portable server** requires Node.js 24.22.1 or later in Node 24. See [download and launch instructions](https://github.com/drakeg/wildblocks/blob/main/RELEASES.md) for OS/CPU selection, server configuration and checksums.
+Update both client and dedicated server. [Farming instructions](https://github.com/drakeg/wildblocks#food-farming--hunger-0120) · [Download and launch guide](https://github.com/drakeg/wildblocks/blob/main/RELEASES.md)
 
-Early development release: macOS builds are ad-hoc signed and not notarized; Windows builds are unsigned. All packages are built on native runners and pass the automated test suite; gameplay has not been manually verified on every OS.
+Standalone packages include runtimes. Early-development macOS builds are ad-hoc signed and not notarized; Windows builds are unsigned. Automated native tests cover all packaged targets; gameplay has not been manually tested on every OS.
+
+Visual gameplay verification for this update remains incomplete after desktop automation was interrupted.

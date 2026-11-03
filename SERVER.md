@@ -92,3 +92,7 @@ Service definitions follow the official [systemd service documentation](https://
 ## Furniture & shared storage (0.11.0)
 
 Update both client and server. Existing world files are preserved; old town crates become lootable through R/right-click without regenerating terrain. New worlds generate furnished towns. Each storage chest has 27 shared stack slots. Transfers are validated and applied on the server, including reach and line of sight; two players cannot take the same items twice. Container changes save before acknowledgement. Nonempty chests cannot be mined. Empty town crates refill after three real hours, including elapsed offline time when the server starts again.
+
+## Farming and food (0.12.0)
+
+Update the client and server together. Hunger drains only while a player is active; it is saved with the account and resets on rescue. A running server advances crops through daylight growth, including while nobody is online. A stopped server does not advance crops. World saves include crop growth and tilled plots. Up to 256 crops are supported. Farm interactions validate server-owned aim/reach, tools and seeds; harvests create shared physical pickups. Eating consumes exactly one server-owned food item and cannot set client-supplied hunger or inventory values. Existing 0.11 inventories, chest contents and four-skill records migrate without resetting progress. Back up server-data before updating.

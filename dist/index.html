@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Wildblocks — your little wilderness</title>
-    <link rel="stylesheet" href="style.css?v=17" />
+    <link rel="stylesheet" href="style.css?v=18" />
   </head>
   <body class="welcome">
     <canvas id="view" aria-label="Wildblocks voxel world"></canvas>
@@ -57,7 +57,7 @@
           <section id="server-connected" hidden><p id="server-who"></p><button id="welcome-enter" class="menu-action">Enter World</button><button id="logout-button">Sign Out</button></section>
           <p id="network-message" role="status"></p><aside id="hosting-panel" hidden><strong>Your server is running</strong><p id="hosting-addresses"></p><button id="copy-host-address">Copy Friends’ Address</button><button id="stop-hosting">Stop Server & Return</button><p class="muted">Closing this app stops this hosted server.</p></aside><button id="single-player" class="back-button">Back to Main Menu</button>
         </section>
-      </div><p class="welcome-version">Wildblocks 0.11.0 · Original worlds. Shared adventures.</p>
+      </div><p class="welcome-version">Wildblocks 0.12.0 · Original worlds. Shared adventures.</p>
     </section>
     <button id="open-workshop" aria-controls="workshop">
       <span id="level-summary">Character level 1</span> · Craft & skills
@@ -68,12 +68,12 @@
       <div class="craft-layout">
         <section class="inventory-pane"><h3>Backpack</h3><div id="workshop-bag" aria-label="Inventory slots"></div><p id="equipment"></p>
           <details><summary>Character & skills</summary><strong id="character-level"></strong><progress id="character-progress" aria-label="Character experience" max="100" value="0"></progress><div id="skill-list"></div></details>
-          <p class="muted">Tools, your best sword, and armor equip automatically. F or left click attacks creatures. C or Escape closes crafting.</p>
+          <p class="muted">Food & farming: mine wild meadow for seeds and wild canopy for berries. Craft a Timber hoe; R tills soil, plants, and harvests. Select food and press Q to eat. Grain bakes into bread at a furnace.</p><p class="muted">Tools, your best sword, and armor equip automatically. F or left click attacks creatures. C or Escape closes crafting.</p>
         </section>
         <section class="craft-pane"><h3>Crafting</h3><p id="station-status" class="muted"></p>
           <div id="craft-preview"><div id="ingredient-grid" aria-label="Required ingredients"></div><span aria-hidden="true">→</span><div id="craft-output"></div></div>
           <p id="recipe-description"></p><button id="craft-selected" class="primary">Craft</button><p id="craft-problem" role="status"></p>
-          <label for="recipe-filter">Recipe book</label><select id="recipe-filter"><option value="all">All recipes</option><option value="building">Building</option><option value="tools">Tools</option><option value="survival">Survival gear</option><option value="furniture">Furniture & storage</option><option value="advanced">Advanced crafting</option></select>
+          <label for="recipe-filter">Recipe book</label><select id="recipe-filter"><option value="all">All recipes</option><option value="building">Building</option><option value="tools">Tools</option><option value="survival">Survival gear</option><option value="farming">Food & farming</option><option value="furniture">Furniture & storage</option><option value="advanced">Advanced crafting</option></select>
           <div id="recipes" aria-label="Crafting recipes"></div>
         </section>
       </div>
@@ -140,11 +140,11 @@
     <div id="hotbar" aria-label="Backpack slots"></div>
     <footer>
       <span id="hint"
-        >Hold left click · mine &nbsp; R / Right click · use &nbsp; Shift-right click · build &nbsp; 1–9 ·
+        >Hold left click · mine &nbsp; R / Right click · use &nbsp; Shift-right click · build &nbsp; Q · eat &nbsp; 1–9 ·
         materials</span
       ><span id="saved" role="status">A world of your own</span>
     </footer>
     <div id="toast" role="status" hidden></div>
-    <script type="module" src="game.js?v=17"></script>
+    <script type="module" src="game.js?v=18"></script>
   </body>
 </html>
