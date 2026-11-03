@@ -20,7 +20,7 @@ test('hunger migrates old saves, drains only while active, and never kills an id
  const h=p.vitals.hunger;for(let i=0;i<100;i++)s.update(w,.1,[p],'creative');assert.equal(p.vitals.hunger,h);
 });
 test('eating spends one real food, rejects full/forged/empty items, and gates regeneration by hunger',()=>{
- const bag=new Gathering(),v=playerVitals();bag.add(30,2);assert.equal(eatFood(bag,v,30).ok,false);v.hunger=5;
+ const bag=new Gathering(),v=playerVitals();bag.add(30,2);assert.equal(eatFood(bag,v,30).ok,false);v.hunger=19.7;assert.equal(eatFood(bag,v,30).ok,false);assert.equal(bag.counts[30],2);v.hunger=5;
  assert(eatFood(bag,v,30).ok);assert.equal(bag.counts[30],1);assert.equal(v.hunger,5+FOOD[30].nutrition);
  assert.equal(eatFood(bag,v,4).ok,false);assert.equal(eatFood(bag,v,32).ok,false);assert.equal(eatFood(bag,v,30,'creative').ok,false);
  const restored=playerVitals(v);assert.equal(restored.hunger,v.hunger);

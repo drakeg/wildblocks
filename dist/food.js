@@ -20,7 +20,7 @@ export function updateHunger(v,dt,active,mode) {
 export function eatFood(bag,vitals,id,mode='survival') {
   if(mode==='creative')return {ok:false,error:'Creative players do not get hungry.'};
   if(!Number.isInteger(id)||!FOOD[id]||!bag.counts[id])return {ok:false,error:'Select food from your backpack first.'};
-  if(hungerValue(vitals.hunger)>=MAX_HUNGER-.001)return {ok:false,error:'You are already full.'};
+  if(hungerValue(vitals.hunger)>MAX_HUNGER-1)return {ok:false,error:'You are already full.'};
   bag.counts[id]--;bag.syncOrder();vitals.hunger=Math.min(MAX_HUNGER,hungerValue(vitals.hunger)+FOOD[id].nutrition);vitals.starving=0;
   return {ok:true,name:FOOD[id].name};
 }
