@@ -27,7 +27,9 @@ test('server owns farming, food consumption, harvest counts, and persistent hung
   const crop=[...service.world.crops.values()][0];crop.growth=CROP_SECONDS;
   const harvest=await Promise.all([request('farm',{action:'harvest'}),request('farm',{action:'harvest'})]);assert.deepEqual(harvest.map(r=>r.status).sort(),[200,409]);
   let state=(await request('state')).body;assert.equal(state.drops.filter(d=>d.id===29).length,3);assert.equal(state.drops.filter(d=>d.id===31).length,2);assert.equal(state.player.inventory[29],0);assert(state.player.skills[4]>=20);
-  assert.equal((await request('farm',{action:'plant'})).status,200);[...service.world.crops.values()][0].growth=80;
+  assert.equal((await request('farm',{action:'plant'})).status,200);
+  // Shade freezes growth while testing exact persistence; the live server clock keeps ticking.
+  service.world.set(32,15,30,7);[...service.world.crops.values()][0].growth=80;
   await request('checkpoint',{position,direction});await service.close();service=await startServer({dataDir:dir,port:0});cookie=undefined;
   state=(await request('login',{username:'FoodTest',password})).body;assert(Math.abs(state.player.vitals.hunger-13)<.1);assert.equal([...service.world.crops.values()][0].growth,80);assert.equal(state.player.inventory[30],1);
   await request('input',{position,direction:{x:0,y:1,z:0},active:true});assert.equal((await request('farm',{action:'till',x:32,y:12,z:30})).status,409);
