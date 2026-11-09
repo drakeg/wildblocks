@@ -1,3 +1,11 @@
+## Unreleased
+
+- Added named singleplayer worlds with independent saves, modes, player locations and progression.
+- Added a world-selection screen with save dates, rename, and new-world name/seed/mode controls.
+- Preserve legacy saves as “My first world”; imports create a separate world instead of replacing the current one.
+- Create a session-start backup before playing an existing world. Restore swaps the current save into the backup, allowing an immediate undo. Backups are local to this device; exported files remain the way to keep an external copy.
+- Storage failures preserve the previous durable save and prevent normal menu transitions that would discard unsaved progress.
+
 ## 0.12.0 — 2026-11-03
 
 - Added hunger, food consumption, food-gated healing, and gradual starvation with a one-health floor. Hunger stops while inactive or in Creative.

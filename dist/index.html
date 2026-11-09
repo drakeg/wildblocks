@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Wildblocks — your little wilderness</title>
-    <link rel="stylesheet" href="style.css?v=18" />
+    <link rel="stylesheet" href="style.css?v=19" />
   </head>
   <body class="welcome">
     <canvas id="view" aria-label="Wildblocks voxel world"></canvas>
@@ -29,9 +29,16 @@
           <button class="quit-game back-button">Quit Game</button><p class="menu-caption">Gather. Craft. Make yourself at home.</p>
         </section>
         <section id="screen-solo" class="start-screen" hidden>
-          <h2 tabindex="-1">Singleplayer</h2><p class="muted">Continue your local world. You manage its rules.</p>
-          <label for="welcome-mode">World mode</label><select id="welcome-mode"><option value="survival">Survival · gather & craft</option><option value="creative">Creative · unlimited building</option></select>
-          <button id="solo-enter" class="menu-action">Play World</button>
+          <h2 tabindex="-1">Your worlds</h2>
+          <label for="world-list">Saved worlds</label><select id="world-list" size="4" aria-describedby="world-message"></select>
+          <button id="solo-enter" class="menu-action">Play Selected World</button>
+          <div class="world-actions"><button id="world-rename">Rename</button><button id="world-restore">Restore Backup</button></div>
+          <p id="world-message" role="status"></p>
+          <details><summary>Create a new world</summary>
+          <label for="new-world-name">World name</label><input id="new-world-name" maxlength="60" placeholder="My little wilderness" />
+          <label for="new-world-seed">Seed (optional)</label><input id="new-world-seed" maxlength="64" placeholder="Random world" />
+          <label for="welcome-mode">New world mode</label><select id="welcome-mode"><option value="survival">Survival · gather & craft</option><option value="creative">Creative · unlimited building</option></select>
+          <button id="world-create">Create & Play</button></details>
           <button data-screen="home" class="back-button">Back</button>
         </section>
         <section id="screen-join" class="start-screen" hidden>
@@ -145,6 +152,6 @@
       ><span id="saved" role="status">A world of your own</span>
     </footer>
     <div id="toast" role="status" hidden></div>
-    <script type="module" src="game.js?v=18"></script>
+    <script type="module" src="game.js?v=19"></script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+import { WorldLibrary } from "./world-library.js";
 import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
 import { farmAction, updateCrops, cropStage } from "./farming.js";
 import { canReachContainer, containerView, transferContainer } from "./interactions.js";
@@ -31,6 +32,7 @@ import {
 } from "./world.js";
 const $ = (id) => document.getElementById(id),
   storageKey = "wildblocks.gathering.v2";
+let library, libraryError = "";
 let sessionStarted = false;
 let initialPlayerState;
 let survival = new Survival(), vitals = playerVitals(), remoteSurvival = null, selectedRecipe = "boards";
@@ -60,10 +62,15 @@ function toast(text) {
   toastTimer = setTimeout(() => ($("toast").hidden = true), 2600);
 }
 try {
-  const stored =
-    localStorage.getItem(storageKey) ||
-    localStorage.getItem("wildblocks.world.v1");
-  const saved = stored ? JSON.parse(stored) : null;
+  let saved;
+  try {
+    library = new WorldLibrary(localStorage);
+    const stored = localStorage.getItem(storageKey) || localStorage.getItem("wildblocks.world.v1");
+    const legacy = stored ? JSON.parse(stored) : null;
+    if(!library.data.worlds.length && legacy) { World.restore(legacy); new Gathering(legacy.inventory,legacy.bag); new Drops(legacy.drops); new Progression(legacy.skills); restoreTools(legacy.tools); }
+    library.migrate(legacy);
+    saved = library.current() ? library.load(library.data.active) : null;
+  } catch (error) { libraryError = error.message; library = null; throw error; }
   world = saved ? World.restore(saved) : new World();
   gathering = new Gathering(saved?.inventory, saved?.bag);
   drops = new Drops(saved?.drops);
@@ -73,7 +80,8 @@ try {
   vitals = playerVitals(saved?.vitals);
   mode = saved?.mode === "creative" ? "creative" : "survival";
   initialPlayerState = resumePlayer(world,saved?.player);
-} catch {
+} catch (error) {
+  libraryError = error.message; library = null;
   world = new World();
   gathering = new Gathering();
   drops = new Drops();
@@ -490,14 +498,19 @@ function persist() {
     $("saved").textContent = connected
       ? `Server · ${serverName}`
       : "Sign in to server";
-    return;
+    return true;
   }
   clearTimeout(saveTimer);
+  if (!sessionStarted && !library?.current()) return true;
   try {
-    localStorage.setItem(storageKey, JSON.stringify(snapshot()));
+    if (!library) throw Error(libraryError);
+    if (!library.current()) library.create("My first world", snapshot());
+    else library.save(snapshot());
     $("saved").textContent = "World saved on this device";
+    return true;
   } catch {
     $("saved").textContent = "Storage unavailable · export to keep your world";
+    return false;
   }
 }
 function select(id) {
@@ -733,26 +746,7 @@ addEventListener(
   },
   { passive: false },
 );
-$("new").onclick = () => {
-  if (
-    !confirm(
-      "Start a new world? Export the current world first if you want to keep it.",
-    )
-  )
-    return;
-  world = new World($("seed").value || "wander-01");
-  gathering = new Gathering();
-  drops = new Drops();
-  progression = new Progression();
-  tools = new Set();
-  survival = new Survival(); vitals = playerVitals();
-  inventoryUI();
-  $("world-name").textContent = world.seed;
-  rebuild();
-  spawn();
-  persist();
-  toast("A new little wilderness is ready.");
-};
+$("new").onclick = () => { if(!serverPage){ persist(); showWelcome(); openScreen("solo"); $("new-world-name").focus(); } };
 $("export").onclick = () => {
   const blob = new Blob([JSON.stringify(snapshot())], {
     type: "application/json",
@@ -776,7 +770,9 @@ $("file").onchange = async (e) => {
     const nextDrops = new Drops(saved.drops),
       nextProgression = new Progression(saved.skills),
       nextTools = restoreTools(saved.tools);
-    if (!confirm("Replace the current world with this imported world?")) return;
+    if (!library) throw Error(libraryError || "World storage is unavailable.");
+    if(!persist()) throw Error("Export your current world before importing another.");
+    library.create(file.name.replace(/\.json$/i, "") || "Imported world", saved);
     world = next;
     gathering = nextGathering;
     drops = nextDrops;
@@ -1252,23 +1248,50 @@ function showWelcome() {
   $("welcome").hidden = false;
   $("menu").hidden = true;
   $("workshop").hidden = true;
+  if(!serverPage) renderWorldList();
   openScreen(serverPage ? "account" : "home", false);
 }
 $("back-to-welcome").onclick = showWelcome;
-$("welcome-mode").onchange = () => {
-  if (!serverPage) {
-    mode = $("welcome-mode").value;
-    $("mode").value = mode;
-    inventoryUI();
+function renderWorldList() {
+  const list=$("world-list"), previous=list.value; list.replaceChildren();
+  for(const entry of library?.list()||[]) {
+    const option=document.createElement("option"); option.value=entry.id;
+    option.textContent=entry.name+" · "+(entry.mode==="creative"?"Creative":"Survival")+" · "+new Date(entry.updated).toLocaleDateString(); list.append(option);
   }
-};
-$("solo-enter").onclick = () => {
-  if (serverPage) return;
-  mode = $("welcome-mode").value;
-  $("mode").value = mode;
-  inventoryUI();
-  $("play").onclick();
-};
+  list.value=previous && library?.data.worlds.some(w=>w.id===previous)?previous:library?.data.active||"";
+  $("solo-enter").disabled=!list.value||!library;
+  $("world-rename").disabled=!list.value||!library;
+  $("world-restore").disabled=!library?.list().find(w=>w.id===list.value)?.hasBackup;
+  $("world-message").textContent=libraryError||(!list.value?"Create your first world below.":"Your worlds are saved separately on this device.");
+}
+function prepareLocalWorld(saved) {
+  const next=World.restore(saved), bag=new Gathering(saved.inventory,saved.bag), nextDrops=new Drops(saved.drops), skills=new Progression(saved.skills), nextTools=restoreTools(saved.tools), resumed=resumePlayer(next,saved.player);
+  return {saved,next,bag,nextDrops,skills,nextTools,resumed,nextSurvival:new Survival(saved.survival),nextVitals:playerVitals(saved.vitals)};
+}
+function loadLocalWorld({saved,next,bag,nextDrops,skills,nextTools,resumed,nextSurvival,nextVitals}) {
+  clearTimeout(saveTimer);
+  world=next; gathering=bag; drops=nextDrops; progression=skills; tools=nextTools;
+  survival=nextSurvival; vitals=nextVitals; mode=saved.mode==="creative"?"creative":"survival";
+  Object.assign(position,resumed.position); yaw=resumed.yaw; pitch=resumed.pitch; velocity.x=velocity.y=velocity.z=0; keys.clear(); miningHeld=false; gathering.reset(); selected=0;
+  $("mode").value=mode; $("seed").value=world.seed; $("world-name").textContent=world.seed; inventoryUI(); rebuild();
+}
+function worldAction(action) { try { if(!library)throw Error(libraryError||"World storage is unavailable."); action(); renderWorldList(); } catch(error) { $("world-message").textContent=error.message+" Export a world if storage is full."; } }
+$("world-list").onchange=renderWorldList;
+$("solo-enter").onclick=()=>worldAction(()=>{
+  if(serverPage)return;
+  const id=$("world-list").value, prepared=prepareLocalWorld(library.load(id));
+  library.checkpoint(id); loadLocalWorld(prepared); $("play").onclick();
+});
+$("world-create").onclick=()=>worldAction(()=>{
+  if(serverPage)return;
+  const name=$("new-world-name").value.trim(); if(!name)throw Error("Give your world a name.");
+  const seed=$("new-world-seed").value.trim(); if(seed.length>64)throw Error("Use a seed of 64 characters or fewer.");
+  const next=new World(seed||crypto.randomUUID());
+  const save={...next.snapshot(),mode:$("welcome-mode").value,tools:[],vitals:{health:20,hunger:20}};
+  const prepared=prepareLocalWorld(save); library.create(name,save); loadLocalWorld(prepared); $("world-list").value=""; $("new-world-name").value=""; $("new-world-seed").value=""; $("play").onclick();
+});
+$("world-rename").onclick=()=>worldAction(()=>{ const id=$("world-list").value, entry=library.list().find(w=>w.id===id), name=prompt("World name",entry.name); if(name!==null)library.rename(id,name); });
+$("world-restore").onclick=()=>worldAction(()=>{ const id=$("world-list").value; if(!confirm("Restore this world's backup? Your current save will become the backup so you can undo this."))return; const prepared=prepareLocalWorld(library.data.worlds.find(w=>w.id===id).backup.save); library.restore(id); loadLocalWorld(prepared); });
 $("welcome-enter").onclick = () => { if (serverPage && connected) $("play").onclick(); };
 $("welcome-mode").value = mode;
 showWelcome();
@@ -1305,7 +1328,7 @@ addEventListener("pagehide", () => {
 });
 async function saveSession() {
   if(active)pause();
-  persist();
+  if(!persist()) throw Error("Storage is full or unavailable. Export your world before leaving.");
   if(connected) {
     try { await network.request("checkpoint",{...inputState(),active:false,holding:false},{keepalive:true}); }
     catch(error){if(error.position)Object.assign(position,error.position);throw error;}
