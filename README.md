@@ -197,7 +197,7 @@ The runtime archive was fetched from the official Node.js v24 distribution at ht
 
 Verification for 0.9: 46 tests pass, including administrator configuration/precedence, graceful console stop, server-owned modes, Creative state/free crafting and saved rules. Browser checks verified solo entry, multiplayer sign-in entering directly, no server mode selector, keyboard navigation, and 320/768/1024/1440px menu widths. Native checks verified Start & Join, a Creative server's read-only mode, local-only hosting status, and Stop Server returning to the main menu. The independent server and bundled runtime are verified on macOS; Linux/Windows service registration requires testing on those systems. See SERVER.md for details.
 
-### Named local worlds (upcoming update)
+### Named local worlds (0.13.0)
 
 Singleplayer lists separately saved worlds with their mode and latest save date. Create a world with a name and optional seed, or select one and choose **Play Selected World**. Joining a multiplayer server still uses the administrator’s mode.
 
