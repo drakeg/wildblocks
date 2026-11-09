@@ -1,4 +1,4 @@
-## Unreleased
+## 0.13.0 — 2026-11-08
 
 - Added named singleplayer worlds with independent saves, modes, player locations and progression.
 - Added a world-selection screen with save dates, rename, and new-world name/seed/mode controls.
