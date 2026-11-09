@@ -871,3 +871,8 @@ body.welcome #survival-hud { display:none; }
 .slot[data-material="30"] .swatch{background:transparent url("./icons/bread.svg") center/contain no-repeat;box-shadow:none}
 .slot[data-material="31"] .swatch{background:transparent url("./icons/seeds.svg") center/contain no-repeat;box-shadow:none}
 .slot[data-material="32"] .swatch{background:transparent url("./icons/berries.svg") center/contain no-repeat;box-shadow:none}
+.world-actions { display: flex; gap: 10px; }
+#world-list { min-height: 130px; }
+#screen-solo details { margin: 16px 0; }
+#screen-solo summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+.welcome-card { max-height: calc(100vh - 250px); overflow-y: auto; }

@@ -196,3 +196,11 @@ For scripted launching: `./Wildblocks-Server.command --mode=creative --port=4182
 The runtime archive was fetched from the official Node.js v24 distribution at https://nodejs.org/dist/latest-v24.x/ and verified against its published SHA-256 checksums. `scripts/build-server.mjs` rebuilds this server package from a verified extracted runtime folder. Keep account/save data outside the distribution folder.
 
 Verification for 0.9: 46 tests pass, including administrator configuration/precedence, graceful console stop, server-owned modes, Creative state/free crafting and saved rules. Browser checks verified solo entry, multiplayer sign-in entering directly, no server mode selector, keyboard navigation, and 320/768/1024/1440px menu widths. Native checks verified Start & Join, a Creative server's read-only mode, local-only hosting status, and Stop Server returning to the main menu. The independent server and bundled runtime are verified on macOS; Linux/Windows service registration requires testing on those systems. See SERVER.md for details.
+
+### Named local worlds (upcoming update)
+
+Singleplayer lists separately saved worlds with their mode and latest save date. Create a world with a name and optional seed, or select one and choose **Play Selected World**. Joining a multiplayer server still uses the administrator’s mode.
+
+Your existing local save becomes **My first world** automatically; its legacy storage entry is retained. Imported worlds get their own slot. Each time you play an existing world, its saved state becomes the session-start backup. **Restore Backup** swaps that backup with the current save; selecting it again undoes the restoration until you start another session.
+
+World slots and backups share this browser/app’s local storage capacity. They are not cloud saves or independent disaster-recovery backups. Export important worlds to files from the pause menu. If storage is full, the last durable save remains intact and the app displays an export warning.
