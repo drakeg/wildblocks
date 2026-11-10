@@ -204,3 +204,7 @@ Singleplayer lists separately saved worlds with their mode and latest save date.
 Your existing local save becomes **My first world** automatically; its legacy storage entry is retained. Imported worlds get their own slot. Each time you play an existing world, its saved state becomes the session-start backup. **Restore Backup** swaps that backup with the current save; selecting it again undoes the restoration until you start another session.
 
 World slots and backups share this browser/app’s local storage capacity. They are not cloud saves or independent disaster-recovery backups. Export important worlds to files from the pause menu. If storage is full, the last durable save remains intact and the app displays an export warning.
+
+### Development process
+
+Wildblocks uses weekly sprints, a prioritized story backlog, explicit acceptance checks, and playable reviews. See the [delivery process](tasks/plan.md), [backlog](tasks/todo.md), and [Sprint 1](tasks/sprints/01.md). Sprint work runs during active development sessions; these documents do not schedule unattended work.
