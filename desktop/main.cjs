@@ -6,6 +6,7 @@ const {
   ipcMain,
   utilityProcess,
   Menu,
+  dialog,
 } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
@@ -29,15 +30,26 @@ function trusted(event) {
 async function prepareRenderer() {
   if(!win || win.isDestroyed() || !win.webContents.getURL())return;
   if(pendingCheckpoint)return pendingCheckpoint;
-  pendingCheckpoint=new Promise(resolve=>{
+  pendingCheckpoint=new Promise((resolve,reject)=>{
     const id=randomUUID();
-    const finish=()=>{clearTimeout(timer);ipcMain.removeListener("wildblocks:checkpoint-complete",onComplete);resolve();};
-    const onComplete=(event,requestId)=>{try{trusted(event);if(requestId===id)finish();}catch{}};
-    const timer=setTimeout(finish,6000);
+    const finish=(error)=>{clearTimeout(timer);ipcMain.removeListener("wildblocks:checkpoint-complete",onComplete);if(error)reject(error);else resolve();};
+    const onComplete=(event,requestId,result)=>{
+      try { trusted(event); } catch { return; }
+      if(requestId!==id || (result?.ok!==true && result?.ok!==false))return;
+      finish(result.ok ? null : Error(String(result.message || "Saving failed.").slice(0,500)));
+    };
+    const timer=setTimeout(()=>finish(Error("The game did not confirm that saving finished. Please try again.")),6000);
     ipcMain.on("wildblocks:checkpoint-complete",onComplete);
-    win.webContents.send("wildblocks:prepare-close",id);
+    try { win.webContents.send("wildblocks:prepare-close",id); } catch(error) { finish(error); }
   }).finally(()=>{pendingCheckpoint=null;});
   return pendingCheckpoint;
+}
+function showSaveFailure(error,canRetry=false) {
+  return dialog.showMessageBox(win,{
+    type:"warning",title:"Your game is still open",message:"Your game could not be saved.",
+    detail:String(error?.message || "Saving failed.").slice(0,500)+"\n\nYour game and hosted server remain open. Try again, or export your world from the pause menu under World & settings.",
+    buttons:canRetry?["Return to Game","Retry Save & Quit"]:["Return to Game"],defaultId:0,cancelId:0,
+  });
 }
 async function local(skipCheckpoint=false) {
   if(!skipCheckpoint)await prepareRenderer();
@@ -204,8 +216,8 @@ app.whenReady().then(() => {
       {
         label: "Game",
         submenu: [
-          { label: "Return to single-player", click: () => local() },
-          { label: "Stop hosted server", click: async () => { await prepareRenderer(); await stopHosting(); await local(true); } },
+          { label: "Return to single-player", click: () => local().catch(error=>showSaveFailure(error)) },
+          { label: "Stop hosted server", click: async () => { try { await prepareRenderer(); await stopHosting(); await local(true); } catch(error) { await showSaveFailure(error); } } },
         ],
       },
       { role: "editMenu" },
@@ -222,8 +234,11 @@ app.on("before-quit",event=>{
   if(closing)return;
   closing=true;
   (async()=>{
-    try { await prepareRenderer(); await stopHosting(); }
-    finally { quitting=true; app.quit(); }
-  })().catch(()=>{});
+    let retry=false;
+    try { await prepareRenderer(); await stopHosting(); quitting=true; app.quit(); }
+    catch(error) { retry=(await showSaveFailure(error,true)).response===1; }
+    finally { closing=false; }
+    if(retry)app.quit();
+  })().catch(()=>{closing=false;});
 });
 app.on("window-all-closed", () => app.quit());

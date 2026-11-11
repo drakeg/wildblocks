@@ -15,7 +15,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Dependencies:** None. **Files:** sprint evidence only.
 
 ### WB-002 — Verify restore and restart in the desktop client (3 points)
-**Status:** Ready · prior attempts blocked by stale automation state; begin with one bounded automation check.
+**Status:** In progress · November 11 check showed matching world-list controls and screenshot; full disposable restore/restart verification remains open.
 **Outcome:** Players trust that a world returns to its saved state.
 **Acceptance:**
 - [ ] In a disposable slot, save distinct position/facing, inventory, hunger and crop state, fully quit, reopen and verify those values.
@@ -25,22 +25,22 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Dependencies:** WB-001. **Files:** tests/world-library.test.mjs; dist/game.js only if a reproducible defect exists; sprint evidence.
 
 ### WB-003 — Protect unsaved progress during desktop exit (2 points)
-**Status:** Ready.
+**Status:** Review · fix, automated regression coverage and native failure/recovery check complete; PR/CI review pending.
 **Outcome:** A player is not silently told to quit successfully when local saving failed.
 **Acceptance:**
-- [ ] Reproduce the storage-failure exit path in an isolated test; determine whether renderer checkpoint errors are swallowed.
-- [ ] On confirmed save failure, preserve the open session and offer a clear retry/export path; normal quit still completes when saving succeeds.
-- [ ] Meaningful tests cover failed and successful checkpoints, including hosted-server shutdown sequencing if changed.
+- [x] Reproduce the storage-failure exit path in an isolated test; determine whether renderer checkpoint errors are swallowed.
+- [x] On confirmed save failure, preserve the open session and offer a clear retry/export path; normal quit still completes when saving succeeds.
+- [x] Meaningful tests cover failed and successful checkpoints, including hosted-server shutdown sequencing if changed.
 **Verification:** Inspect desktop/preload.cjs and desktop/main.cjs with dist/game.js saveSession; focused automated tests and native failure/retry check. Do not fill human storage to simulate failure.
 **Dependencies:** None; may proceed if WB-002 is blocked. **Files:** desktop/main.cjs, desktop/preload.cjs, dist/game.js, focused tests. Split if investigation exceeds this size.
 
 ### WB-004 — Record repeatable release checks (1 point)
-**Status:** Ready.
+**Status:** Review · checklist and 0.13.0 baseline recorded in RELEASES.md.
 **Outcome:** Each release states what has actually been tested.
 **Acceptance:**
-- [ ] Document source/head, tests, CI, expected assets and checksum checks in a reusable checklist.
-- [ ] Separate automated platform coverage from native manual checks and record unresolved limitations.
-- [ ] Apply the checklist to 0.13.0 and link the evidence from the sprint review.
+- [x] Document source/head, tests, CI, expected assets and checksum checks in a reusable checklist.
+- [x] Separate automated platform coverage from native manual checks and record unresolved limitations.
+- [x] Apply the checklist to 0.13.0 and link the evidence from the sprint review.
 **Verification:** Compare checklist against the actual packaging workflow; no redundant pipeline rewrite.
 **Dependencies:** WB-001; desktop evidence depends on WB-002. **Files:** RELEASES.md, tasks/sprints/01.md.
 

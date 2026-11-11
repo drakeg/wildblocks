@@ -41,3 +41,22 @@ Node.js 24.22.2 and `npm ci` install the pinned build environment. Run `npm run 
 GitHub Actions tests and builds on five native runner configurations, then publishes a release only after **all** packages succeed. Pushing a new `package.json` version to `main` publishes `v<version>` with client/server downloads, the portable server, and checksums. An existing version's downloads are preserved. A matching version tag or manual Actions run can also trigger the workflow. Failed builds remain visible in Actions and never publish a partial release. To fix an already published package, bump the version rather than replacing its downloads.
 
 Packages are portable distributions, not auto-updating installers. Native build and server tests do not replace playing the client on every supported OS; graphics and desktop integration may vary.
+
+## Maintainer release record
+
+Copy this checklist into the release PR or sprint evidence. A blank check is unverified, not an assumed pass.
+
+- [ ] Record version, source commit, PR head and release/tag URL. Ensure package.json, lockfile, menu and release notes agree; preserve published downloads.
+- [ ] Run relevant focused tests, full tests, syntax checks and dependency audit. Record counts, failures and accepted limitations; check CI for the actual head.
+- [ ] Confirm native builds for macOS arm64/x64, Windows x64, Linux arm64/x64, plus the portable server. Record the packaging workflow URL and all job conclusions.
+- [ ] Confirm all 11 package assets and SHA256SUMS.txt are uploaded and nonempty. Compare every manifest row with its asset digest. If packages are downloaded, also hash those downloaded bytes; metadata comparison alone does not claim a local launch.
+- [ ] Record manual platform coverage separately: actual OS, app version, disposable test profile, steps and observed result. Include launch, world selection, save/restart, backup restore/undo and normal exit. Note untested platforms.
+- [ ] Test error recovery relevant to changed behavior. For exit changes, verify failed save keeps the game/server open, return/export is available, and retry succeeds after recovery.
+- [ ] Keep user saves untouched. Document migration and backup/export instructions and unresolved limitations in release notes. Link remaining stories instead of silently closing them.
+- [ ] Record a release decision and reviewer. A merge does not establish successful publication or manual gameplay verification.
+
+### 0.13.0 baseline
+
+[Release](https://github.com/drakeg/wildblocks/releases/tag/v0.13.0) · source `314145959f89db6cb30ede57008a67c09f15fc80` · [successful packaging run](https://github.com/drakeg/wildblocks/actions/runs/42562606693).
+
+On November 9, 2026, all 11 packages were uploaded and nonempty; all 11 checksum rows matched the GitHub asset digests. Preparation had 78 passing automated tests. Native macOS checks observed world creation/switching and saved inventory/hunger display. Exact-position restart and full visual backup restore/undo remain open in WB-002; Windows/Linux manual gameplay was not verified. The release is already published. See [Sprint 1](tasks/sprints/01.md) for evidence and current follow-up status.
