@@ -25,7 +25,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Dependencies:** WB-001. **Files:** tests/world-library.test.mjs; dist/game.js only if a reproducible defect exists; sprint evidence.
 
 ### WB-003 — Protect unsaved progress during desktop exit (2 points)
-**Status:** Review · fix, automated regression coverage and native failure/recovery check complete; PR/CI review pending.
+**Status:** Done (technical) · PR #17 merged November 11, 2026; merged-main CI passed; product acceptance pending.
 **Outcome:** A player is not silently told to quit successfully when local saving failed.
 **Acceptance:**
 - [x] Reproduce the storage-failure exit path in an isolated test; determine whether renderer checkpoint errors are swallowed.
@@ -35,7 +35,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Dependencies:** None; may proceed if WB-002 is blocked. **Files:** desktop/main.cjs, desktop/preload.cjs, dist/game.js, focused tests. Split if investigation exceeds this size.
 
 ### WB-004 — Record repeatable release checks (1 point)
-**Status:** Review · checklist and 0.13.0 baseline recorded in RELEASES.md.
+**Status:** Done (technical) · checklist and 0.13.0 baseline recorded in RELEASES.md; product acceptance pending.
 **Outcome:** Each release states what has actually been tested.
 **Acceptance:**
 - [x] Document source/head, tests, CI, expected assets and checksum checks in a reusable checklist.
@@ -47,10 +47,10 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 ## Ordered future backlog — not committed
 
 ### WB-005 — Diagnose dependency update automation (1 point)
-**Status:** Ready · maintenance; reprioritize if updates cannot be delivered.
+**Status:** In progress · November 11 diagnostic identified the failed Dependabot update path; verification of a subsequent run remains open.
 **Outcome:** Dependency updates run reliably.
 **Acceptance:** Identify the failed Dependabot step's actual cause; fix configuration or document an external outage; verify the next relevant run without weakening security checks.
-**Verification:** Workflow diagnostics and targeted configuration validation. **Dependencies:** None. **Files:** only affected configuration.
+**Verification:** Failed [Dependabot run 42562616375](https://github.com/drakeg/wildblocks/actions/runs/42562616375), job 128982137083, reports a minimatch security update that could only be solved by the updater via a downgrade of `@electron/packager` 20.3.0 to 18.4.4, or by a compatible override. The current lockfile already selects `minimatch` 10.2.6 and `@electron/packager` 20.3.0; do not introduce a downgrade based on the stale failed run. Confirm the patched-version advisory and a new successful audit/update run before marking Done. **Dependencies:** None. **Files:** only affected configuration.
 
 ### WB-006 — Craft a bed and choose a respawn point (3 points)
 **Status:** Needs refinement for Sprint 2.
