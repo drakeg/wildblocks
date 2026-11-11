@@ -28,7 +28,7 @@ async function desktopFixture() {
  const source=await readFile(new URL('../desktop/main.cjs',import.meta.url),'utf8');
  vm.runInNewContext(source,{require:name=>name==='electron'?electron:require(name),__dirname:resolve('desktop'),setTimeout,clearTimeout,URL,Promise,Response});
  await tick();events.length=0;
- return {app,events,win,handlers,ack(valid=true){events.push(valid?'checkpoint-complete':'untrusted-ack');ipc.emit('wildblocks:checkpoint-complete',{sender:valid?win.webContents:{},senderFrame:win.webContents.mainFrame},requestId);},async cleanup(){await rm(dataDir,{recursive:true,force:true});}};
+ return {app,events,win,handlers,ack(valid=true){events.push(valid?'checkpoint-complete':'untrusted-ack');ipc.emit('wildblocks:checkpoint-complete',{sender:valid?win.webContents:{},senderFrame:win.webContents.mainFrame},requestId,{ok:true});},async cleanup(){await rm(dataDir,{recursive:true,force:true});}};
 }
 test('native quit keeps renderer and server alive until the final checkpoint completes',async()=>{
  const d=await desktopFixture();

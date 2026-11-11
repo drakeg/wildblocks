@@ -1,3 +1,8 @@
+## Unreleased
+
+- WB-003: Desktop quit now requires explicit save success. Failed saves and timeouts keep the game and hosted server open, with return/export guidance and a retry option. Native menu transitions also report checkpoint failures instead of leaving rejected promises unhandled.
+- WB-004: Added a repeatable maintainer release checklist and a 0.13.0 evidence record.
+
 ## 0.13.0 — 2026-11-08
 
 - Added named singleplayer worlds with independent saves, modes, player locations and progression.
