@@ -34,3 +34,32 @@ test('real world snapshots survive reopen and backup swaps with position, crops,
   assert.deepEqual(reopened.restore(first),after);
   assert.equal(reopened.list().find(w=>w.seed==='other').mode,'creative');
 });
+
+
+test('failed backup restoration preserves active world, backup, and other slots across restart',()=>{
+  const {library,storage,entries}=setup();
+  const a=library.create('Primary',{seed:'primary',player:{position:{x:18.5,y:21,z:12.5},yaw:.8,pitch:-.3},vitals:{health:18,hunger:7},crops:[{growth:40}],inventory:[2,3]});
+  library.checkpoint(a);
+  library.save({seed:'primary',player:{position:{x:20.5,y:22,z:14.5},yaw:-.4,pitch:.25},vitals:{health:12,hunger:9},crops:[{growth:120}],inventory:[4,5]});
+  const b=library.create('Secondary',{seed:'secondary',player:{position:{x:30,y:19,z:31},yaw:1,pitch:0}});
+  const before=entries.get(LIBRARY_KEY);
+  const originalSet=storage.setItem;
+  storage.setItem=()=>{throw Error('quota');};
+  assert.throws(()=>library.restore(a),/quota/);
+  assert.equal(entries.get(LIBRARY_KEY),before);
+  assert.equal(library.current().id,b);
+  assert.equal(library.load(a).vitals.hunger,9);
+  assert.equal(library.data.worlds.find(w=>w.id===a).backup.save.vitals.hunger,7);
+  storage.setItem=originalSet;
+  let reopened=new WorldLibrary(storage);
+  assert.equal(reopened.current().id,b);
+  assert.equal(reopened.load(b).seed,'secondary');
+  const restored=reopened.restore(a);
+  assert.deepEqual(restored.player,{position:{x:18.5,y:21,z:12.5},yaw:.8,pitch:-.3});
+  assert.equal(restored.vitals.hunger,7);
+  assert.equal(restored.crops[0].growth,40);
+  assert.deepEqual(reopened.restore(a).player,{position:{x:20.5,y:22,z:14.5},yaw:-.4,pitch:.25});
+  reopened=new WorldLibrary(storage);
+  assert.equal(reopened.load(b).player.position.x,30);
+  assert.equal(reopened.load(a).vitals.hunger,9);
+});
