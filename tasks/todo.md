@@ -15,7 +15,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Dependencies:** None. **Files:** sprint evidence only.
 
 ### WB-002 — Verify restore and restart in the desktop client (3 points)
-**Status:** In progress · November 11 check showed matching world-list controls and screenshot; full disposable restore/restart verification remains open.
+**Status:** In progress · November 12 isolated macOS checkout passed all 85 automated tests (including backup failure and restart regression); native UI restore/restart verification remains open.
 **Outcome:** Players trust that a world returns to its saved state.
 **Acceptance:**
 - [ ] In a disposable slot, save distinct position/facing, inventory, hunger and crop state, fully quit, reopen and verify those values.
@@ -47,10 +47,10 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 ## Ordered future backlog — not committed
 
 ### WB-005 — Diagnose dependency update automation (1 point)
-**Status:** In progress · November 11 diagnostic identified the failed Dependabot update path; verification of a subsequent run remains open.
+**Status:** In progress · November 12 fresh macOS `npm audit --audit-level=high` passed with 0 high/critical and 3 moderate findings; successful Dependabot remediation still unverified.
 **Outcome:** Dependency updates run reliably.
 **Acceptance:** Identify the failed Dependabot step's actual cause; fix configuration or document an external outage; verify the next relevant run without weakening security checks.
-**Verification:** Failed [Dependabot run 42562616375](https://github.com/drakeg/wildblocks/actions/runs/42562616375), job 128982137083, reports a minimatch security update that could only be solved by the updater via a downgrade of `@electron/packager` 20.3.0 to 18.4.4, or by a compatible override. The current lockfile already selects `minimatch` 10.2.6 and `@electron/packager` 20.3.0; do not introduce a downgrade based on the stale failed run. Confirm the patched-version advisory and a new successful audit/update run before marking Done. **Dependencies:** None. **Files:** only affected configuration.
+**Verification:** Failed [Dependabot run 42562616375](https://github.com/drakeg/wildblocks/actions/runs/42562616375), job 128982137083, reports a minimatch security update that could only be solved by the updater via a downgrade of `@electron/packager` 20.3.0 to 18.4.4, or by a compatible override. The current lockfile already selects `minimatch` 10.2.6 and `@electron/packager` 20.3.0; do not introduce a downgrade based on the stale failed run. A fresh `npm audit --audit-level=high --json` on an isolated macOS clone (November 12) passed with 0 high/critical vulnerabilities, but identified 3 moderate advisories involving `@electron/asar`, `glob`, and `minimatch`. Review those separately and verify a new successful Dependabot update run before marking Done. **Dependencies:** None. **Files:** only affected configuration.
 
 ### WB-006 — Craft a bed and choose a respawn point (3 points)
 **Status:** Needs refinement for Sprint 2.
