@@ -15,7 +15,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Dependencies:** None. **Files:** sprint evidence only.
 
 ### WB-002 — Verify restore and restart in the desktop client (3 points)
-**Status:** In progress · November 12 isolated macOS checkout passed all 85 automated tests (including backup failure and restart regression); native UI restore/restart verification remains open.
+**Status:** In progress · November 13 isolated macOS Electron 45.3.0 native session verified two-world persistence after quit/restart and UI backup restore/undo; distinct in-game position/facing/inventory/crop interactions and visual evidence remain open.
 **Outcome:** Players trust that a world returns to its saved state.
 **Acceptance:**
 - [ ] In a disposable slot, save distinct position/facing, inventory, hunger and crop state, fully quit, reopen and verify those values.
