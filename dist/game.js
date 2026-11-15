@@ -435,7 +435,7 @@ function workshopUI() {
   $("craft-selected").disabled=!!problem;
   $("craft-selected").textContent='Craft '+recipe.name;
 }
-function materialIcon(id) { return ['','meadow','earth','slate','honeywood','canopy','terracotta','timber-boards','slate-bricks','crafting-table','torch','iron-ore','starstone','iron-ingot','starsteel','furnace','anvil','stonecutter','reinforced-bricks','supply-crate','door','window','table','chair','chest','door','glass','tilled-soil','grain','grain','bread','seeds','berries'][id]; }
+function materialIcon(id) { return ['','meadow','earth','slate','honeywood','canopy','terracotta','timber-boards','slate-bricks','crafting-table','torch','iron-ore','starstone','iron-ingot','starsteel','furnace','anvil','stonecutter','reinforced-bricks','supply-crate','door','window','table','chair','chest','door','glass','tilled-soil','grain','grain','bread','seeds','berries','bed'][id]; }
 function recipeIcon(r) { if(r.key==='timber-hoe')return 'hoe';return r.output?materialIcon(r.output.id):r.tool?.includes('sword')?'sword':r.tool?.includes('armor')||r.tool?.includes('helmet')?'armor':r.expand?'backpack':'tools'; }
 $("recipe-filter").onchange=workshopUI;
 $("workshop-bag").onclick=e=>{const slot=e.target.closest('[data-bag-slot]');if(slot)select(Number(slot.dataset.bagSlot));};
