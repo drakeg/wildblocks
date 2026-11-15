@@ -15,9 +15,9 @@ npm test
 npm run desktop
 ```
 
-Use Node.js 24.22.2 for development and release builds. The editable client source lives in `dist/` (it is deliberately tracked, not generated), the Electron wrapper in `desktop/`, and the authoritative server in `server/`. Build native downloads using `npm run package:release`; see [RELEASES.md](RELEASES.md) for automated publication.
+GitHub Actions currently builds with Node.js 26.13.1; the packaged dedicated server uses a separately verified Node.js 24 runtime. The editable client source lives in `dist/` (it is deliberately tracked, not generated), the Electron wrapper in `desktop/`, and the authoritative server in `server/`. Build native downloads using `npm run package:release`; see [RELEASES.md](RELEASES.md) for automated publication.
 
-## Current game: 0.12.0
+## Current game: 0.13.1
 
 ## Food, farming & hunger (0.12.0)
 
