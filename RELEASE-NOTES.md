@@ -1,15 +1,16 @@
-Named worlds and local backups arrive in Wildblocks 0.13.0.
+Wildblocks 0.13.1 — Save reliability maintenance release
 
-- Singleplayer now lists separate named worlds with each world's mode and save date.
-- Create worlds with a name, optional seed, and Survival or Creative mode; switch without replacing another save.
-- Existing local saves migrate to “My first world.” Imports create another world slot.
-- Playing an existing world makes a session-start backup. Restore Backup swaps it with the current save, allowing an immediate undo before starting another session.
-- Saves, inventory, crops, skills, hunger and player locations stay with their world. Multiplayer mode remains controlled by the server administrator.
-- Local slots and backups share the app/browser storage limit. Export important worlds to files for an independent backup.
-- Includes Electron 45.2.3.
+This patch builds on 0.13.0's named worlds and local backups. It contains no new terrain, creatures, crafting items or save-format changes.
 
-[Download and launch guide](https://github.com/drakeg/wildblocks/blob/main/RELEASES.md)
+- Desktop Save & Quit and window close require an explicit successful checkpoint before closing the game. If saving fails or times out, the game and any hosted server remain open so you can retry or export your world.
+- Returning to local play or stopping an in-app hosted server now reports checkpoint failure instead of discarding unsaved progress.
+- Added tests for failed save/quit, retry, late or untrusted checkpoint responses, and backup restoration failure, undo and isolation between separate world slots.
+- Updated Electron to 45.3.2. GitHub Actions uses Node.js 26.13.1 for building; dedicated-server packages continue to bundle the existing Node 24 runtime.
 
-Standalone client and server packages include runtimes. Early-development macOS builds are ad-hoc signed and not notarized; Windows builds are unsigned.
+Existing 0.13.0 worlds and backups remain in place. Back up important worlds using Export World before upgrading. No migration or world reset is required.
 
-Validation: 78 automated tests cover saves, backup swaps, restart reconstruction, inventories, vitals, crops and player locations. Native desktop verification confirmed the saved world list and restored inventory/hunger display. Full visual backup-restore and exact-position verification remain incomplete because desktop automation returned stale controls and unavailable windows.
+[Downloads and platform launch instructions](https://github.com/drakeg/wildblocks/blob/main/RELEASES.md)
+
+Validation: current merged-main packaging CI passed on macOS ARM64/x64, Windows x64 and Linux ARM64/x64, with the portable server built separately. Isolated macOS native-source QA verified world selection, two-world persistence, save/reopen, backup restore/undo and player position/facing persistence. Inventory acquisition and crop growth have automated coverage but their complete native UI replay remains unverified. Individual packaged binaries have not all been manually launched.
+
+Mac binaries are ad-hoc signed, not Apple-notarized. Windows binaries are not Authenticode signed. See RELEASES.md for installation details.
