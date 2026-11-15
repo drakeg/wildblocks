@@ -53,9 +53,10 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Verification:** Failed [Dependabot run 42562616375](https://github.com/drakeg/wildblocks/actions/runs/42562616375), job 128982137083, reports a minimatch security update that could only be solved by the updater via a downgrade of `@electron/packager` 20.3.0 to 18.4.4, or by a compatible override. The current lockfile already selects `minimatch` 10.2.6 and `@electron/packager` 20.3.0; do not introduce a downgrade based on the stale failed run. A fresh `npm audit --audit-level=high --json` on an isolated macOS clone (November 12) passed with 0 high/critical vulnerabilities, but identified 3 moderate advisories involving `@electron/asar`, `glob`, and `minimatch`. Review those separately and verify a new successful Dependabot update run before marking Done. **Dependencies:** None. **Files:** only affected configuration.
 
 ### WB-006 — Craft a bed and choose a respawn point (3 points)
-**Status:** Needs refinement for Sprint 2.
+**Status:** In progress · first slice implements craftable and oriented Woven bed furniture; personal respawn binding and multiplayer interaction remain outstanding.
 **Outcome:** A home provides a meaningful safe return point.
 **Acceptance draft:** Craft/place a bed with original assets; set and persist a personal spawn through interaction; recover safely if the bed is removed or blocked, including multiplayer validation.
+**Slices:** (1) Craft/place/orient bed furniture with legacy-save coverage; (2) solo interaction and personal respawn fallback; (3) authoritative multiplayer interaction and validation.
 **Verification:** Solo and server behavior, persistence and blocked-spawn tests, desktop demonstration. **Dependencies:** save reliability. **Files:** determine during refinement; split crafting, interaction and server work if needed.
 
 ### WB-007 — Rejoin a saved server (2 points)

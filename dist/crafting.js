@@ -26,6 +26,7 @@ export const RECIPES = [
   {key:"window",name:"Framed windows",description:"Two transparent glass windows with timber frames.",cost:[[26,2],[7,2]],output:{id:21,count:2},category:"furniture"},
   {key:"dining-table",name:"Timber table",description:"A table for furnishing a home. Crafting uses a separate crafting table.",cost:[[7,4]],output:{id:22,count:1},category:"furniture"},
   {key:"chair",name:"Timber chair",description:"A timber chair for furnishing a home.",cost:[[7,3]],output:{id:23,count:1},category:"furniture"},
+  {key:"woven-bed",name:"Woven bed",description:"A placeable bed made with timber and canopy. Respawn binding is coming in the next gameplay slice.",cost:[[7,6],[5,2]],output:{id:33,count:1},category:"furniture"},
   {key:"chest",name:"Storage chest",description:"Shared storage with 27 slots. Right-click or R to open. Empty it before removing it.",cost:[[7,8]],output:{id:24,count:1},station:true,category:"furniture"},
   {key:"furnace",name:"Furnace",description:"Place to smelt iron and starsteel. Crafting level 3.",cost:[[3,8],[7,4]],output:{id:15,count:1},station:true,level:3,category:"advanced"},
   {key:"smelt-iron",name:"Iron ingots",description:"Smelt two iron ore using a timber board as fuel. Stand near a furnace.",cost:[[11,2],[7,1]],output:{id:13,count:2},stationId:15,level:3,category:"advanced"},

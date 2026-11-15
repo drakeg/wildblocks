@@ -28,14 +28,14 @@ export const MINING_SECONDS = [
   2.8,
   2.2,
   Infinity,
-  1.25, .35, Infinity, Infinity, Infinity, Infinity,
+  1.25, .35, Infinity, Infinity, Infinity, Infinity, 2.2,
 ];
 export class Gathering {
   constructor(saved, layout) {
     if (
       saved !== undefined &&
       (!Array.isArray(saved) ||
-        ![7, 9, 10, 11, 20, 27, MATERIALS.length].includes(saved.length) ||
+        ![7, 9, 10, 11, 20, 27, 33, MATERIALS.length].includes(saved.length) ||
         saved.some((n) => !Number.isInteger(n) || n < 0 || n > 9999) ||
         saved[0] !== 0)
     )
@@ -172,7 +172,7 @@ export class Gathering {
       if(overlapsBlock(player,x,y+1,z)||world.doors.size>=2048||!world.placeDoor(x,y,z,facing))return false;
     } else {
       if (!world.set(x, y, z, id)) return false;
-      if([21,22,23,24].includes(id))world.facing.set(`${x},${y},${z}`,facing);
+      if([21,22,23,24,33].includes(id))world.facing.set(`${x},${y},${z}`,facing);
     }
     if (mode !== "creative") {
       this.counts[id]--;

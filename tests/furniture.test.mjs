@@ -5,7 +5,8 @@ import {Gathering} from '../dist/gathering.js';
 import {containerView,transferContainer,canReachContainer} from '../dist/interactions.js';
 import {Drops} from '../dist/drops.js';
 import {SUPPLY_REGEN_MS} from '../dist/settlements.js';
-import {RECIPES} from '../dist/crafting.js';
+import {RECIPES,craft} from '../dist/crafting.js';
+import {Progression} from '../dist/progression.js';
 
 test('doors require two empty cells, block the closed doorway, persist state, and remove both halves',()=>{
  const w=new World('door',1);assert(w.placeDoor(32,13,30,0));assert.equal(w.get(32,14,30),25);
@@ -35,7 +36,7 @@ test('town crates can be opened, partially looted then mined without duplicating
 test('storage requires reach and unobstructed line of sight; furniture has craft recipes',()=>{
  const w=new World('reach',1);w.set(32,14,30,24);const p={x:32.5,y:13.05,z:33.5};assert(canReachContainer(w,p,32,14,30));
  w.set(32,14,32,7);assert(!canReachContainer(w,p,32,14,30));assert(!canReachContainer(w,{x:50,y:13,z:50},32,14,30));
- for(const id of [20,21,22,23,24,26])assert(RECIPES.some(r=>r.output?.id===id));
+ for(const id of [20,21,22,23,24,26,33])assert(RECIPES.some(r=>r.output?.id===id));
  const modern=new World('furnished');assert.equal(modern.doors.size,6);assert(modern.data.includes(21));assert(modern.data.includes(22));assert(modern.data.includes(23));assert(modern.data.includes(24));
  assert.deepEqual(World.restore(modern.snapshot()).snapshot(),modern.snapshot());
 });
@@ -57,4 +58,17 @@ test('server validates opened containers, serializes competing transfers, and pe
  const winner=results[0].status===200?a:b;assert.equal((await winner('container',{...input,direction:'store',count:3})).status,200);
  await service.close();service=await startServer({dataDir:dir,port:0});const c=client();assert.equal((await c('login',{username:'ChestOne',password})).status,200);assert.equal(service.world.ensureContainer(32,14,30).counts[4],3);
  }finally{await service.close();await rm(dir,{recursive:true,force:true});}
+});
+
+test('woven beds craft, place with orientation, persist, and load old inventory layouts',()=>{
+ const w=new World('bed-furniture',1),bag=new Gathering(),p=new Progression();
+ bag.counts[7]=6;bag.counts[5]=2;
+ assert(craft('woven-bed',bag,new Set(),p,'survival'));
+ assert.equal(bag.counts[33],1);assert.equal(bag.counts[7],0);assert.equal(bag.counts[5],0);
+ assert(bag.place(w,32,14,30,33,{x:32.5,y:13,z:32.5},'survival',2));
+ assert.equal(bag.counts[33],0);
+ assert.equal(w.get(32,14,30),33);
+ assert.equal(World.restore(w.snapshot()).facing.get('32,14,30'),2);
+ const old=new Gathering(Array(33).fill(0));assert.equal(old.counts[33],0);
+ assert.equal(new Gathering(bag.snapshot()).counts[33],0);
 });
