@@ -37,6 +37,7 @@ export const MATERIALS = [
   { name: "Bread", color: "#d39a52", placeable: false },
   { name: "Seeds", color: "#b1a275", placeable: false },
   { name: "Berries", color: "#b34d64", placeable: false },
+  { name: "Woven bed", color: "#b0788c" },
 ];
 export function hash(x, z, seed = 0) {
   let n = Math.imul(x, 374761393) ^ Math.imul(z, 668265263) ^ seed;
@@ -283,7 +284,7 @@ export class World {
     for(const [key,id]of w.edits)if(id===28&&!w.crops.has(key))throw Error('Crop is missing its growth state.');
     if(save.doors!==undefined){if(!Array.isArray(save.doors)||save.doors.length>2048)throw Error("Invalid doors.");for(const d of save.doors){if(!d||w.get(d.x,d.y,d.z)!==20||w.get(d.x,d.y+1,d.z)!==25||!Number.isInteger(d.facing)||d.facing<0||d.facing>3||typeof d.open!=="boolean")throw Error("Invalid door state.");w.doors.set(`${d.x},${d.y},${d.z}`,{...d});}}
     if(save.facing!==undefined){if(!Array.isArray(save.facing)||save.facing.length>SIZE*SIZE*HEIGHT)throw Error("Invalid furniture orientation.");for(const r of save.facing){if(!r||typeof r.key!=="string"||!/^\d+,\d+,\d+$/.test(r.key)||!Number.isInteger(r.facing)||r.facing<0||r.facing>3)throw Error("Invalid furniture orientation.");w.facing.set(r.key,r.facing);}}
-    if(save.containers!==undefined){if(!Array.isArray(save.containers)||save.containers.length>2048)throw Error("Invalid storage.");for(const c of save.containers){const actual=c&&w.ensureContainer(c.x,c.y,c.z);if(!actual||!Array.isArray(c.counts)||![27,MATERIALS.length].includes(c.counts.length)||c.counts[0]!==0||c.counts.some((n,id)=>!Number.isInteger(n)||n<0||n>9999||(id===19||id===25)&&n>0)||!Array.isArray(c.order)||c.order.some(id=>!Number.isInteger(id)||id<1||id>=MATERIALS.length)||new Set(c.order).size!==c.order.length)throw Error("Invalid chest contents.");actual.counts=Array.from({length:MATERIALS.length},(_,i)=>c.counts[i]??0);actual.order=[...c.order].filter(id=>actual.counts[id]>0);for(let id=1;id<actual.counts.length;id++)if(actual.counts[id]>0&&!actual.order.includes(id))actual.order.push(id);}}
+    if(save.containers!==undefined){if(!Array.isArray(save.containers)||save.containers.length>2048)throw Error("Invalid storage.");for(const c of save.containers){const actual=c&&w.ensureContainer(c.x,c.y,c.z);if(!actual||!Array.isArray(c.counts)||![27,33,MATERIALS.length].includes(c.counts.length)||c.counts[0]!==0||c.counts.some((n,id)=>!Number.isInteger(n)||n<0||n>9999||(id===19||id===25)&&n>0)||!Array.isArray(c.order)||c.order.some(id=>!Number.isInteger(id)||id<1||id>=MATERIALS.length)||new Set(c.order).size!==c.order.length)throw Error("Invalid chest contents.");actual.counts=Array.from({length:MATERIALS.length},(_,i)=>c.counts[i]??0);actual.order=[...c.order].filter(id=>actual.counts[id]>0);for(let id=1;id<actual.counts.length;id++)if(actual.counts[id]>0&&!actual.order.includes(id))actual.order.push(id);}}
     for(const row of legacyTorches)w.set(...row);
     if(save.torches!==undefined) {
       if(!Array.isArray(save.torches)||save.torches.length>2048)throw Error("Invalid attached torches.");
