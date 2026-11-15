@@ -1,6 +1,10 @@
 ## Unreleased
 
+## 0.13.1 — 2026-11-14
+
 - WB-003: Desktop quit now requires explicit save success. Failed saves and timeouts keep the game and hosted server open, with return/export guidance and a retry option. Native menu transitions also report checkpoint failures instead of leaving rejected promises unhandled.
+- Added regression coverage for atomic backup restoration when storage is full, including undo and isolation of a second world.
+- Updated Electron to 45.3.2 and refreshed CI's Node.js 26.13.1 runner for packaging; bundled dedicated-server Node.js runtime remains unchanged.
 - WB-004: Added a repeatable maintainer release checklist and a 0.13.0 evidence record.
 
 ## 0.13.0 — 2026-11-08

@@ -15,7 +15,7 @@
     "@electron/packager": "20.3.0",
     "electron": "45.3.2"
   },
-  "version": "0.13.0",
+  "version": "0.13.1",
   "main": "desktop/main.cjs",
   "description": "An original multiplayer voxel sandbox with crafting, survival, creative building, and self-hosted servers.",
   "author": "Wildblocks",
