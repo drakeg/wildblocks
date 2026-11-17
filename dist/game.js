@@ -1,6 +1,7 @@
 import { WorldLibrary } from "./world-library.js";
 import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
 import { bindBed } from "./bed-spawn.js";
+import { BED_PIECES, bedVertex } from "./bed-model.js";
 import { farmAction, updateCrops, cropStage } from "./farming.js";
 import { canReachContainer, containerView, transferContainer } from "./interactions.js";
 import { resumePlayer, playerSnapshot, viewDirection, directionView } from "./player-state.js";
@@ -204,11 +205,11 @@ function buildChunk(cx, cz) {
       for (let y = 0; y < HEIGHT; y++) {
         const id = world.get(x, y, z);
         if (!id || [20,25].includes(id)) continue;
-        if ([9,15,16,17,19,21,22,23,24,27,28].includes(id)) {
+        if ([9,15,16,17,19,21,22,23,24,27,28,33].includes(id)) {
           const legs=[[.07,0,.07,.12,.7,.12,.8],[.81,0,.07,.12,.7,.12,.8],[.07,0,.81,.12,.7,.12,.8],[.81,0,.81,.12,.7,.12,.8]];
           const stage=cropStage(world.crops.get(`${x},${y},${z}`)?.growth||0),height=.2+stage*.23;
           const cropPieces=[.22,.5,.76].flatMap(px=>[[px,0,.3,.055,height,.055,.8],[px-.07,height*.65,.24,.2,.08,.16,1.2]]);
-          const pieces = id===28 ? cropPieces : id===27 ? [[0,0,0,1,.96,1,1],...[.1,.4,.7].map(px=>[px,.96,0,.08,.04,1,.65])] : id===21 ? [[0,0,.43,.1,1,.14,.8],[.9,0,.43,.1,1,.14,.8],[.1,0,.43,.8,.1,.14,.8],[.1,.9,.43,.8,.1,.14,.8],[.48,.1,.43,.04,.8,.14,.8]] : id===22 ? [...legs,[0,.7,0,1,.14,1,1.15]] : id===23 ? [...legs,[0,.45,0,1,.13,1,1.1],[0,.58,.85,1,.42,.12,.9]] : id===24 ? [[.04,0,.06,.92,.72,.88,.85],[.02,.72,.04,.96,.17,.92,1.15],[.43,.5,.025,.14,.24,.05,.45]] : id===15 ? [[0,0,0,1,1,1,.9],[.15,.2,-.015,.7,.5,.02,.2],[.1,.12,-.025,.8,.08,.03,1.3]] : id===16 ? [[.2,0,.2,.6,.18,.6,.8],[.35,.18,.35,.3,.45,.3,.75],[.04,.6,.1,.92,.3,.8,1.2],[.85,.6,.3,.2,.2,.35,1]] : id===17 ? [[.05,0,.05,.9,.35,.9,.8],[.12,.35,.42,.76,.42,.12,1.3]] : id===19 ? [[0,0,0,1,1,1,.9],[0,.18,-.01,1,.08,.02,.45],[0,.72,-.01,1,.08,.02,.45],[.15,0,-.02,.1,1,.02,.6],[.75,0,-.02,.1,1,.02,.6]] : [
+          const pieces = id===33 ? BED_PIECES : id===28 ? cropPieces : id===27 ? [[0,0,0,1,.96,1,1],...[.1,.4,.7].map(px=>[px,.96,0,.08,.04,1,.65])] : id===21 ? [[0,0,.43,.1,1,.14,.8],[.9,0,.43,.1,1,.14,.8],[.1,0,.43,.8,.1,.14,.8],[.1,.9,.43,.8,.1,.14,.8],[.48,.1,.43,.04,.8,.14,.8]] : id===22 ? [...legs,[0,.7,0,1,.14,1,1.15]] : id===23 ? [...legs,[0,.45,0,1,.13,1,1.1],[0,.58,.85,1,.42,.12,.9]] : id===24 ? [[.04,0,.06,.92,.72,.88,.85],[.02,.72,.04,.96,.17,.92,1.15],[.43,.5,.025,.14,.24,.05,.45]] : id===15 ? [[0,0,0,1,1,1,.9],[.15,.2,-.015,.7,.5,.02,.2],[.1,.12,-.025,.8,.08,.03,1.3]] : id===16 ? [[.2,0,.2,.6,.18,.6,.8],[.35,.18,.35,.3,.45,.3,.75],[.04,.6,.1,.92,.3,.8,1.2],[.85,.6,.3,.2,.2,.35,1]] : id===17 ? [[.05,0,.05,.9,.35,.9,.8],[.12,.35,.42,.76,.42,.12,1.3]] : id===19 ? [[0,0,0,1,1,1,.9],[0,.18,-.01,1,.08,.02,.45],[0,.72,-.01,1,.08,.02,.45],[.15,0,-.02,.1,1,.02,.6],[.75,0,-.02,.1,1,.02,.6]] : [
             [0, 0.76, 0, 1, 0.24, 1, 1.2],
             [0.06, 0, 0.06, 0.16, 0.76, 0.16, 0.8],
             [0.78, 0, 0.06, 0.16, 0.76, 0.16, 0.8],
@@ -236,7 +237,7 @@ function buildChunk(cx, cz) {
         }
         for (const f of faces) {
           const neighbor = world.get(x + f.n[0], y + f.n[1], z + f.n[2]);
-          if (neighbor && ![9,16,17,20,21,22,23,24,25,28].includes(neighbor)) continue;
+          if (neighbor && ![9,16,17,20,21,22,23,24,25,28,33].includes(neighbor)) continue;
           const shade =
             f.light * (0.93 + hash(x + y * 13, z, world.number) * 0.14);
           const color = [11,12].includes(id) ? palette[3] : palette[id];
@@ -1432,7 +1433,7 @@ function renderSurvival(time){
 }
 
 function facingDirection(){return ((Math.round(yaw/(Math.PI/2))%4)+4)%4;}
-function furnitureVertex(x,y,z,a,b,c,id){let turns=[21,23,24].includes(id)?world.facing.get(`${x},${y},${z}`)||0:0;for(let i=0;i<turns;i++)[a,c]=[1-c,a];return[x+a,y+b,z+c];}
+function furnitureVertex(x,y,z,a,b,c,id){const turns=[21,23,24,33].includes(id)?world.facing.get(`${x},${y},${z}`)||0:0;return bedVertex(x,y,z,a,b,c,turns);}
 let openStorage=null;
 function showContainer(data){openStorage=data;if(active)pause();$("container-panel").hidden=false;$("menu").hidden=true;$("container-title").textContent=data.title;containerUI();}
 function containerUI(){if(!openStorage)return;const slot=(id,count,direction)=>`<button ${id?'':'disabled'} data-item="${id||0}" data-direction="${direction}" title="${id?MATERIALS[id].name:''}">${id?`<img src="icons/${materialIcon(id)}.svg" alt="${MATERIALS[id].name}"/><b>${count}</b>`:''}</button>`;$("storage-grid").innerHTML=Array.from({length:27},(_,i)=>{const id=openStorage.order[i];return slot(id,openStorage.counts[id],"take");}).join('');$("storage-bag").innerHTML=Array.from({length:gathering.capacity},(_,i)=>{const id=gathering.order[i];return slot(id,gathering.counts[id],"store");}).join('');$("storage-note").textContent=openStorage.kind===19?'Town supplies · take what you need. Empty crates refill after three hours.':'Shared chest · click a stack to move it. Empty the chest before removing it.';}
