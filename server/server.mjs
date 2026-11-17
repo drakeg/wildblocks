@@ -1,4 +1,5 @@
 import { eatFood, vitalsSnapshot } from "../dist/food.js";
+import { bindBed } from "../dist/bed-spawn.js";
 import { farmAction, updateCrops } from "../dist/farming.js";
 import { canReachContainer, containerView, transferContainer, INTERACT_REACH } from "../dist/interactions.js";
 import { resumePlayer, validPlayerPosition, validDirection, viewDirection } from "../dist/player-state.js";
@@ -403,7 +404,11 @@ export async function startServer({
         if(path==="/api/interact"&&req.method==="POST") {
           await body(req);
           const hit=raycast(world,{x:u.position.x,y:u.position.y+1.62,z:u.position.z},u.direction,INTERACT_REACH);
-          if(!hit)fail(409,"Move closer and point at a door, chest or crate.");
+          if(!hit)fail(409,"Move closer and point at an interactable object.");
+          if(hit.id===33){
+            if(!u.active||!bindBed(world,u.vitals,hit))fail(409,"Move closer and clear a safe space beside the bed.");
+            dirty=true;save();return json(res,200,state(u));
+          }
           if(hit.id===20||hit.id===25) {
             if(!world.toggleDoor(hit.x,hit.y,hit.z,[...users.values()].filter(other=>now-other.lastSeen<5000)))fail(409,"The doorway must be clear before closing.");
             revision++;dirty=true;save();return json(res,200,state(u));
