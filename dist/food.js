@@ -9,7 +9,7 @@ export function hungerValue(saved) {
   return Number.isFinite(saved) ? Math.max(0,Math.min(MAX_HUNGER,saved)) : MAX_HUNGER;
 }
 export function vitalsSnapshot(v) {
-  return {health:v.health,respawns:v.respawns,hunger:hungerValue(v.hunger),starving:v.starving||0};
+  return {health:v.health,respawns:v.respawns,hunger:hungerValue(v.hunger),starving:v.starving||0,respawnBed:v.respawnBed??null};
 }
 export function updateHunger(v,dt,active,mode) {
   if(!active||mode==='creative')return;
