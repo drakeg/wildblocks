@@ -1,5 +1,6 @@
 import { MAX_HUNGER, hungerValue, updateHunger } from "./food.js";
 import { collides, movePlayer, raycast, SIZE, torchPosition } from './world.js';
+import { savedBed, respawnLocation } from './bed-spawn.js';
 export const CYCLE_SECONDS = 720;
 export const MAX_HEALTH = 20;
 export function dayState(seconds) {
@@ -14,7 +15,7 @@ export function weapon(tools) {
   return tools.has('iron-sword') ? {name:'Iron sword',damage:10} : tools.has('slate-sword') ? { name: 'Slate sword', damage: 7 } : tools.has('wood-sword') ? { name: 'Timber sword', damage: 4 } : { name: 'Empty hands', damage: 1 };
 }
 export function playerVitals(saved) {
-  return { hunger:hungerValue(saved?.hunger), starving:Number.isFinite(saved?.starving)?Math.max(0,Math.min(10,saved.starving)):0, health: Number.isFinite(saved?.health) ? Math.max(1, Math.min(MAX_HEALTH, saved.health)) : MAX_HEALTH, hurt: 0, attackCooldown: 0, respawns: Number.isSafeInteger(saved?.respawns) && saved.respawns>=0 ? saved.respawns : 0, regen: 0 };
+  return { hunger:hungerValue(saved?.hunger), starving:Number.isFinite(saved?.starving)?Math.max(0,Math.min(10,saved.starving)):0, health: Number.isFinite(saved?.health) ? Math.max(1, Math.min(MAX_HEALTH, saved.health)) : MAX_HEALTH, hurt: 0, attackCooldown: 0, respawns: Number.isSafeInteger(saved?.respawns) && saved.respawns>=0 ? saved.respawns : 0, respawnBed: savedBed(saved?.respawnBed), regen: 0 };
 }
 export function torchesIn(world) { return [...world.torches.values()].map(t=>{const p=torchPosition(t);return {...p,y:p.y+.3};}); }
 export function torchSafe(point, torches) {
@@ -77,7 +78,7 @@ export class Survival {
         p.vitals.health=Math.max(0,p.vitals.health-Math.max(1,5*(1-protection(p.tools))));
         p.vitals.hurt=1; m.attack=1.2; p.vitals.regen=0;
         if(p.vitals.health<=0) {
-          Object.assign(p.position,{x:32.5,y:world.surface(32,32)+0.05,z:32.5});
+          Object.assign(p.position,respawnLocation(world,p.vitals));
           p.vitals.health=MAX_HEALTH; p.vitals.hunger=MAX_HUNGER;p.vitals.starving=0; p.vitals.hurt=5; p.vitals.respawns++;
         }
       }
