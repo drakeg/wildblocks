@@ -1,5 +1,6 @@
 import { WorldLibrary } from "./world-library.js";
 import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
+import { bindBed } from "./bed-spawn.js";
 import { farmAction, updateCrops, cropStage } from "./farming.js";
 import { canReachContainer, containerView, transferContainer } from "./interactions.js";
 import { resumePlayer, playerSnapshot, viewDirection, directionView } from "./player-state.js";
@@ -847,7 +848,7 @@ function frame(time) {
       const respawns = vitals.respawns;
       survival.update(world,dt,[{position,tools,vitals,active}],mode);
       if(updateCrops(world,dt,dayState(survival.elapsed).daylight)){rebuild();changed();}
-      if(vitals.respawns!==respawns){velocity.y=0;toast("You were rescued at camp. Your inventory is safe.");}
+      if(vitals.respawns!==respawns){velocity.y=0;toast("You respawned safely. Your inventory is safe.");}
     }
     if (fallback) {
       yaw +=
@@ -1444,7 +1445,7 @@ function useTarget(){if(!hit||hit.distance>5)return false;
     if(action==='harvest'&&drops.items.length+world.pendingDrops.length>2030){toast('Collect nearby drops before harvesting.');return true;}
     if(connected){sendInputNow();network.request('farm',{action}).then(applyServerState).catch(error=>toast(error.message));}
     else{const result=farmAction(world,{bag:gathering,tools,skills:progression},hit,action,mode);if(result.ok){world.flushDrops(drops);refreshNear(hit.x,hit.z);changed();}toast(result.message||result.error);}return true;
-  }if([9,15,16,17].includes(hit.id)){openWorkshop();return true;}if(![19,20,24,25].includes(hit.id))return false;if(connected){sendInputNow();network.request('interact',{}).then(applyServerState).catch(e=>toast(e.message));}else if([20,25].includes(hit.id)){if(world.toggleDoor(hit.x,hit.y,hit.z,[position]))changed();else toast('Step out of the doorway first.');}else if(canReachContainer(world,position,hit.x,hit.y,hit.z)){showContainer(containerView(world,hit.x,hit.y,hit.z));}return true;}
+  }if([9,15,16,17].includes(hit.id)){openWorkshop();return true;}if(![19,20,24,25,33].includes(hit.id))return false;if(connected){sendInputNow();network.request('interact',{}).then(applyServerState).catch(e=>toast(e.message));}else if(hit.id===33){if(bindBed(world,vitals,hit)){changed();toast("Respawn set at this bed.");}else toast("Clear a safe space beside the bed first.");}else if([20,25].includes(hit.id)){if(world.toggleDoor(hit.x,hit.y,hit.z,[position]))changed();else toast('Step out of the doorway first.');}else if(canReachContainer(world,position,hit.x,hit.y,hit.z)){showContainer(containerView(world,hit.x,hit.y,hit.z));}return true;}
 const windowMeshes=new Map(),paneGeometry=new THREE.BoxGeometry(.8,.8,.025),paneMaterial=new THREE.MeshStandardMaterial({color:0xbde6e9,transparent:true,opacity:.24,roughness:.15,depthWrite:false});
 const doorMeshes=new Map(),doorGeometry=new THREE.BoxGeometry(1,2,.12),doorMaterial=new THREE.MeshStandardMaterial({color:0xa87840}),knobGeometry=new THREE.BoxGeometry(.09,.09,.1),knobMaterial=new THREE.MeshStandardMaterial({color:0xe4c46e});
 let windowWorld=null,windowVersion=-1;
