@@ -1,5 +1,8 @@
 ## Unreleased
 
+- WB-006: Added craftable Woven beds, persistent personal respawn checkpoints and server-validated bed interaction, with safe camp fallback when a bed is removed or blocked.
+- Replaced the full-cube bed placeholder with a low-profile, four-way oriented timber frame, woven quilt and pillow model. Updated the recipe instructions to explain bed respawn binding.
+
 ## 0.13.1 — 2026-11-14
 
 - WB-003: Desktop quit now requires explicit save success. Failed saves and timeouts keep the game and hosted server open, with return/export guidance and a retry option. Native menu transitions also report checkpoint failures instead of leaving rejected promises unhandled.
