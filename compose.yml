@@ -1,0 +1,30 @@
+# Optional, isolated dedicated server for local/LAN testing.
+# Localhost by default; explicitly set WILDBLOCKS_BIND_IP=0.0.0.0 for trusted LAN.
+services:
+  wildblocks-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    ports:
+      - "${WILDBLOCKS_BIND_IP:-127.0.0.1}:${WILDBLOCKS_PUBLISHED_PORT:-4182}:4182"
+    environment:
+      WILDBLOCKS_HOST: 0.0.0.0
+      WILDBLOCKS_PORT: "4182"
+      WILDBLOCKS_DATA: /var/lib/wildblocks
+      WILDBLOCKS_MODE: ${WILDBLOCKS_MODE:-survival}
+      WILDBLOCKS_SEED: ${WILDBLOCKS_SEED:-friends-01}
+    volumes:
+      - wildblocks_data:/var/lib/wildblocks
+    stop_grace_period: 30s
+
+volumes:
+  wildblocks_data:
