@@ -9,4 +9,5 @@ async function check(folder) {
   }
 }
 for (const folder of ['desktop','dist','server','scripts','tests']) await check(folder);
-console.log('JavaScript syntax checks passed.');
+execFileSync(process.execPath,['scripts/badges.mjs'],{stdio:'inherit'});
+console.log('JavaScript syntax and README badge checks passed.');
