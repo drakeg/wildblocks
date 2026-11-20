@@ -1,0 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+test('standalone container uses persistent data, local binding and non-root runtime',()=>{
+ const compose=readFileSync('compose.yml','utf8');
+ const docker=readFileSync('Dockerfile.server','utf8');
+ const env=readFileSync('.env.example','utf8');
+ assert.match(compose,/WILDBLOCKS_BIND_IP:-127\.0\.0\.1/);
+ assert.match(compose,/WILDBLOCKS_PUBLISHED_PORT:-4182/);
+ assert.match(compose,/WILDBLOCKS_DATA: \/var\/lib\/wildblocks/);
+ assert.match(compose,/wildblocks_data:\/var\/lib\/wildblocks/);
+ assert.match(compose,/read_only: true/);
+ assert.match(compose,/no-new-privileges:true/);
+ assert.match(compose,/stop_grace_period: 30s/);
+ assert.match(docker,/FROM node:24-alpine/);
+ assert.match(docker,/USER node/);
+ assert.match(docker,/api\/status/);
+ assert.match(env,/WILDBLOCKS_BIND_IP=127\.0\.0\.1/);
+ assert.doesNotMatch(docker,/npm (install|ci)/);
+});
