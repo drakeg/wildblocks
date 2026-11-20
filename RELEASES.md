@@ -60,3 +60,7 @@ Copy this checklist into the release PR or sprint evidence. A blank check is unv
 [Release](https://github.com/drakeg/wildblocks/releases/tag/v0.13.0) · source `314145959f89db6cb30ede57008a67c09f15fc80` · [successful packaging run](https://github.com/drakeg/wildblocks/actions/runs/42562606693).
 
 On November 9, 2026, all 11 packages were uploaded and nonempty; all 11 checksum rows matched the GitHub asset digests. Preparation had 78 passing automated tests. Native macOS checks observed world creation/switching and saved inventory/hunger display. Exact-position restart and full visual backup restore/undo remain open in WB-002; Windows/Linux manual gameplay was not verified. The release is already published. See [Sprint 1](tasks/sprints/01.md) for evidence and current follow-up status.
+
+### Packaging network and Windows archive handling
+
+Native server bundles download an official pinned Node.js runtime and verify it against the official distribution checksum manifest before packaging. The build retries transient download failures; Windows ZIP extraction uses the runner's bsdtar. If the official distribution is unreachable, the build still fails rather than distributing an unverified runtime. Review the actual matrix logs before publishing or claiming platform support.
