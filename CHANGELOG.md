@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Release packaging: extract the official Windows Node.js runtime ZIP using Windows bsdtar instead of the PowerShell Expand-Archive path that failed on a hosted Windows runner; retry transient official runtime download failures more robustly while keeping SHA-256 verification.
+
 - WB-006: Added craftable Woven beds, persistent personal respawn checkpoints and server-validated bed interaction, with safe camp fallback when a bed is removed or blocked.
 - Replaced the full-cube bed placeholder with a low-profile, four-way oriented timber frame, woven quilt and pillow model. Updated the recipe instructions to explain bed respawn binding.
 
