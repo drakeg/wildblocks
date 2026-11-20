@@ -33,15 +33,16 @@ function archive(folder, output) {
   }
 }
 async function download(url, output) {
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  for (let attempt = 1; attempt <= 5; attempt++) {
     try {
-      console.log(`Downloading ${basename(output)} (attempt ${attempt}/3)`);
+      console.log(`Downloading ${basename(output)} (attempt ${attempt}/5)`);
       const response = await fetch(url, {signal:AbortSignal.timeout(120000)});
       if (!response.ok) throw Error(`Download failed (${response.status}): ${url}`);
       await writeFile(output, Buffer.from(await response.arrayBuffer()));
       return;
     } catch (error) {
-      if (attempt === 3) throw error;
+      if (attempt === 5) throw error;
+      await new Promise(resolve=>setTimeout(resolve,Math.min(attempt*1500,6000)));
       console.warn(`Download interrupted: ${error.message}; retrying.`);
     }
   }
@@ -77,8 +78,9 @@ await download(baseURL+runtimeArchive,runtimeFile);
 const expected = (await readFile(checksumFile,'utf8')).split(/\r?\n/).find(line=>line.endsWith(' '+runtimeArchive))?.split(/\s+/)[0];
 const actual = createHash('sha256').update(await readFile(runtimeFile)).digest('hex');
 if (!expected || expected !== actual) throw Error('Official Node runtime checksum mismatch.');
-if (platform === 'win32') run('powershell.exe',['-NoProfile','-NonInteractive','-Command',
-  `Expand-Archive -LiteralPath ${psLiteral(runtimeFile)} -DestinationPath ${psLiteral(stage)} -Force`]);
+// Windows runners ship bsdtar, which extracts the official ZIP without PowerShell's
+// Expand-Archive / .NET overload ambiguity. The archive's SHA-256 is verified above.
+if (platform === 'win32') run('tar',['-xf',runtimeFile,'-C',stage]);
 else run('tar',['-xzf',runtimeFile,'-C',stage]);
 const serverFolder = join(stage,`Wildblocks-Server-${pkg.version}-${target}`);
 await buildPortable(serverFolder);
