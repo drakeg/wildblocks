@@ -1,4 +1,5 @@
 import { WorldLibrary } from "./world-library.js";
+import { normalizeServerAddress, readSavedServers, saveServer, removeServer } from "./saved-servers.js";
 import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
 import { bindBed } from "./bed-spawn.js";
 import { BED_PIECES, bedVertex } from "./bed-model.js";
@@ -1208,15 +1209,47 @@ $("single-player").onclick = async () => {
   if(window.wildblocksDesktop)return window.wildblocksDesktop.local();
   await saveSession();location.assign(location.origin+"/?offline=1");
 };
+function renderSavedServerList(){
+  const list=$("saved-servers-list");list.replaceChildren();
+  const entries=readSavedServers(localStorage);
+  if(!entries.length){const empty=document.createElement("li");empty.textContent="No saved servers yet.";list.append(empty);return;}
+  for(const entry of entries){
+    const row=document.createElement("li");row.className="saved-server-entry";
+    const select=document.createElement("button");select.type="button";select.className="saved-server-select";
+    select.textContent=entry.name+" · "+entry.address;select.title="Use "+entry.address;select.dataset.address=entry.address;
+    const remove=document.createElement("button");remove.type="button";remove.className="saved-server-remove";
+    remove.textContent="Remove";remove.setAttribute("aria-label","Remove saved server "+entry.name);remove.dataset.removeAddress=entry.address;
+    row.append(select,remove);list.append(row);
+  }
+}
+$("save-server-button").onclick=()=>{
+  try{
+    const address=normalizeServerAddress($("server-address").value);
+    saveServer(localStorage,address,$("saved-server-name").value);
+    $("server-address").value=address;renderSavedServerList();
+    $("connection-message").textContent="Server saved on this device. Passwords are not stored.";
+  }catch(error){$("connection-message").textContent=error.message;}
+};
+$("saved-servers-list").onclick=event=>{
+  const remove=event.target.closest("[data-remove-address]");
+  const select=event.target.closest("[data-address]");
+  if(remove){
+    try{removeServer(localStorage,remove.dataset.removeAddress);renderSavedServerList();$("connection-message").textContent="Saved server removed.";}
+    catch(error){$("connection-message").textContent=error.message;}
+  }else if(select){
+    $("server-address").value=select.dataset.address;
+    $("saved-server-name").value="";
+    $("connection-message").textContent="Server selected. Choose Join Server to connect.";
+  }
+};
+try{renderSavedServerList();}catch{$("connection-message").textContent="Saved servers are unavailable on this device.";}
 $("connect-button").onclick = async () => {
   const button = $("connect-button");
   button.disabled = true;
   $("connection-message").textContent = "Connecting…";
   try {
-    const address = $("server-address").value.trim();
-    const url = new URL(address.includes("://") ? address : "http://" + address);
-    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password)
-      throw Error("Enter a server address without a username or password.");
+    const address = normalizeServerAddress($("server-address").value);
+    const url = new URL(address);
     try { localStorage.setItem("wildblocks-server-address", url.origin); } catch {}
     persist();
     if (window.wildblocksDesktop) await window.wildblocksDesktop.connect(url.origin);

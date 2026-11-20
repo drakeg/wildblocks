@@ -876,3 +876,12 @@ body.welcome #survival-hud { display:none; }
 #screen-solo details { margin: 16px 0; }
 #screen-solo summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
 .welcome-card { max-height: calc(100vh - 250px); overflow-y: auto; }
+
+#saved-servers-panel { margin: 12px 0; }
+#saved-servers-panel h3 { margin: 10px 0 4px; font: 20px Georgia, serif; }
+#saved-servers-panel .muted { margin: 0 0 8px; }
+#saved-servers-list { list-style: none; margin: 0 0 8px; padding: 0; max-height: 190px; overflow-y: auto; }
+.saved-server-entry { display: flex; align-items: center; gap: 6px; margin: 5px 0; }
+#saved-servers-list .saved-server-select { flex: 1; min-width: 0; overflow-wrap: anywhere; text-align: left; }
+#saved-servers-list .saved-server-remove { flex: none; }
+#save-server-button { width: 100%; margin-bottom: 6px; }

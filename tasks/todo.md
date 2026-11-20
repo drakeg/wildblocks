@@ -60,7 +60,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Verification:** Solo and server behavior, persistence and blocked-spawn tests, desktop demonstration. **Dependencies:** save reliability. **Files:** determine during refinement; split crafting, interaction and server work if needed.
 
 ### WB-007 — Rejoin a saved server (2 points)
-**Status:** Needs refinement.
+**Status:** In progress · first slice allows saved named addresses with no credentials, strict URL validation and removal; actual reachability indication remains pending. Native macOS isolated-profile QA verified save, reload, select, remove and graceful quit on November 20; no human saves were touched.
 **Outcome:** Players can easily reconnect to friends.
 **Acceptance draft:** Add/name/remove saved addresses without storing passwords; display reachable/unreachable status and safe errors; joining respects administrator mode.
 **Verification:** Address validation, local server unavailable/online cases and real menu interaction. **Dependencies:** None. **Files:** determine during refinement.

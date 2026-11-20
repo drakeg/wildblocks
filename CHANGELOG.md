@@ -1,5 +1,7 @@
 ## Unreleased
 
+- WB-007: Add credential-free named saved multiplayer server addresses with selection, removal and bounded local storage; reject URLs containing credentials or unexpected path/query data. Online/offline status remains upcoming.
+
 - Release packaging: extract the official Windows Node.js runtime ZIP using Windows bsdtar instead of the PowerShell Expand-Archive path that failed on a hosted Windows runner; retry transient official runtime download failures more robustly while keeping SHA-256 verification.
 
 - WB-006: Added craftable Woven beds, persistent personal respawn checkpoints and server-validated bed interaction, with safe camp fallback when a bed is removed or blocked.
