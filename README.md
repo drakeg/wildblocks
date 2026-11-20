@@ -12,6 +12,10 @@ An original multiplayer voxel sandbox with survival and creative modes, crafting
 
 Clients and standalone servers are packaged for Apple Silicon/Intel macOS, Windows x64, and Linux x64/ARM64. Native packages include their runtimes. A smaller portable server is available for systems with Node.js 24.22.1+. The game uses original code and independently licensed assets.
 
+## Saved multiplayer servers (under development)
+
+The Multiplayer menu can save and name up to 20 server addresses locally, select one to join, and remove old addresses. Passwords and login cookies are never saved in the list; server authentication still happens only on the server. Addresses must use HTTP(S) and cannot contain embedded credentials, paths or query strings. This is unreleased WB-007 functionality: online/offline indicators and complete native UI acceptance are not yet verified.
+
 ## Develop
 
 For an isolated, persistent dedicated-server test using Docker Compose, see [Docker Compose setup](SERVER.md#docker-compose-testing-optional). The desktop client is not containerized.
