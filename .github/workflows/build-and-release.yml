@@ -137,6 +137,11 @@ jobs:
             sleep 2
           done
           node -e 'const fs=require("fs");const v=JSON.parse(fs.readFileSync("/tmp/wildblocks-status.json"));if(!v.wildblocks||v.protocol!==1)process.exit(1)'
+          # The server checkpoints asynchronously every two seconds.
+          for attempt in $(seq 1 10); do
+            if docker compose -p wildblocks-ci exec -T wildblocks-server test -s /var/lib/wildblocks/server.json; then break; fi
+            sleep 2
+          done
           docker compose -p wildblocks-ci exec -T wildblocks-server test -s /var/lib/wildblocks/server.json
           docker compose -p wildblocks-ci restart wildblocks-server
           for attempt in $(seq 1 30); do
