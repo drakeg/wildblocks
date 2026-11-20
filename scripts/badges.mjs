@@ -35,7 +35,9 @@ const original=readFileSync(readmePath,'utf8');
 const begin=original.indexOf(start),finish=original.indexOf(end);
 if(begin<0||finish<begin||original.indexOf(start,begin+start.length)>=0||original.indexOf(end,finish+end.length)>=0)
  throw Error('Exactly one valid README badge marker pair is required.');
-const updated=original.slice(0,begin)+content+original.slice(finish+end.length);
+const newline=original.includes('\r\n')?'\r\n':'\n';
+const normalized=content.replace(/\n/g,newline);
+const updated=original.slice(0,begin)+normalized+original.slice(finish+end.length);
 if(process.argv.includes('--write')) {
  if(updated!==original)writeFileSync(readmePath,updated);
  console.log('Badge block synchronized with verified manifest and workflow.');
