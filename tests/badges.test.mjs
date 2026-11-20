@@ -35,5 +35,11 @@ test('README badges are deterministic, version-aware and preserve prose',()=>{
    assert.equal(run([]).status,1,'dependency upgrade must invalidate version badge');
    assert.equal(run(['--write']).status,0);
    assert.match(readFileSync(readme,'utf8'),/Electron%2045\.4\.1/);
+   writeFileSync(join(dir,'Dockerfile.server'),'FROM node:24-alpine\n');
+   writeFileSync(join(dir,'compose.yml'),'services: {}\n');
+   assert.equal(run([]).status,1,'adding Docker Compose should invalidate the existing badges');
+   assert.equal(run(['--write']).status,0);
+   assert.match(readFileSync(readme,'utf8'),/Docker%20Compose/);
+   assert.equal(run([]).status,0);
  } finally {rmSync(dir,{recursive:true,force:true});}
 });
