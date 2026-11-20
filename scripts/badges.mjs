@@ -20,7 +20,11 @@ const a=[
  staticBadge(`Electron ${electron}`,'47848F','electron','https://www.electronjs.org/'),
  staticBadge('Three.js','000000','threedotjs','https://threejs.org/'),
  staticBadge('Node.js','5FA04E','nodedotjs','https://nodejs.org/'),
- staticBadge('Self-hosted server','555555','serverfault',`https://github.com/${repo}/blob/main/SERVER.md`)
+ staticBadge('Self-hosted server','555555','serverfault',`https://github.com/${repo}/blob/main/SERVER.md`),
+ ...(existsSync(resolve(root,'Dockerfile.server')) && existsSync(resolve(root,'compose.yml')) ? [
+   staticBadge('Docker','2496ED','docker','https://www.docker.com/'),
+   staticBadge('Docker Compose','2496ED','docker',`https://github.com/${repo}/blob/main/compose.yml`)
+ ] : [])
 ].join(' ');
 const b=[
  `[![Build and release](https://github.com/${repo}/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/${repo}/actions/workflows/build-and-release.yml)`,
