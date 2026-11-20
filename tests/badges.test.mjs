@@ -26,6 +26,11 @@ test('README badges are deterministic, version-aware and preserve prose',()=>{
    assert.equal(run([]).status,0);
    assert.equal(run(['--write']).status,0);
    assert.equal(readFileSync(readme,'utf8'),first,'second write must be idempotent');
+   // Windows Git checkouts may use CRLF; that is not badge drift.
+   writeFileSync(readme,first.replace(/\n/g,'\r\n'));
+   assert.equal(run([]).status,0,'CRLF checkout must be accepted');
+   assert.equal(run(['--write']).status,0);
+   assert.equal(readFileSync(readme,'utf8'),first.replace(/\n/g,'\r\n'),'CRLF must be preserved');
    writeFileSync(join(dir,'package.json'),JSON.stringify({type:'module',license:'UNLICENSED',devDependencies:{electron:'45.4.1'},scripts:{test:'node --test',check:'node scripts/check.mjs'}}));
    assert.equal(run([]).status,1,'dependency upgrade must invalidate version badge');
    assert.equal(run(['--write']).status,0);
