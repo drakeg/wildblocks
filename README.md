@@ -8,6 +8,9 @@ Clients and standalone servers are packaged for Apple Silicon/Intel macOS, Windo
 
 ## Develop
 
+For an isolated, persistent dedicated-server test using Docker Compose, see [Docker Compose setup](SERVER.md#docker-compose-testing-optional). The desktop client is not containerized.
+
+
 ```sh
 npm ci
 npm run check
