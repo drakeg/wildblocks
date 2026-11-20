@@ -44,6 +44,9 @@
         <section id="screen-join" class="start-screen" hidden>
           <h2 tabindex="-1">Multiplayer</h2><p class="muted">Join a friend's world. The administrator sets the game mode.</p>
           <div id="network-details"><label for="server-address">Server address</label><input id="server-address" placeholder="192.168.1.20:4182" autocomplete="url" spellcheck="false" />
+          <label for="saved-server-name">Save as (optional)</label><input id="saved-server-name" maxlength="48" placeholder="Friends' server" autocomplete="off" />
+          <button id="save-server-button" type="button">Save this server</button>
+          <div id="saved-servers-panel"><h3>Saved servers</h3><p class="muted">Addresses only. Passwords are never saved.</p><ul id="saved-servers-list" aria-label="Saved multiplayer servers"></ul></div>
           <button id="connect-button" class="menu-action">Join Server</button><p id="connection-message" role="status"></p></div>
           <button data-screen="home" class="back-button">Back</button>
         </section>
