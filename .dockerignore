@@ -1,0 +1,14 @@
+.git
+.github
+node_modules
+build
+server-data
+.env
+.env.*
+*.pem
+*.key
+*.png
+*.md
+tests
+tasks
+scripts

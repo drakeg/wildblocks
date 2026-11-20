@@ -2,6 +2,23 @@
 
 This server is independent of the Wildblocks desktop app. The same server code runs on Linux, Windows, and macOS, using original game code and assets. The portable package needs **Node.js 24 LTS** from [nodejs.org](https://nodejs.org/en/download). It has no npm dependencies. The Apple Silicon bundle includes its own Node runtime.
 
+## Docker Compose testing (optional)
+
+The root `compose.yml` runs **only the dedicated server**, not the Electron desktop application. It needs Docker Engine with Compose v2; the container uses Node.js 24 without downloading npm dependencies during its application build.
+
+```sh
+cp .env.example .env
+docker compose -p wildblocks-test up -d --build
+docker compose -p wildblocks-test ps
+curl -f http://127.0.0.1:4182/api/status
+```
+
+`.env` is ignored by Git. By default Docker publishes **127.0.0.1:4182**, accessible only from the host. To test from other computers on a **trusted LAN**, set `WILDBLOCKS_BIND_IP=0.0.0.0` in `.env` and use the Mac or Linux host's LAN IP, while restricting access with the host firewall. Change `WILDBLOCKS_PUBLISHED_PORT` to avoid port collisions; container port remains 4182. Never expose plain-HTTP game accounts publicly without TLS/reverse proxy and an explicit security review.
+
+The named volume `wildblocks-test_wildblocks_data` (Compose project dependent) stores the world and player accounts. To stop without deleting data, run `docker compose -p wildblocks-test down` (**never add `-v`** unless intentionally destroying the test world). Before upgrading, stop the server and back up the named volume. Keep this Compose project distinct from existing game servers. A normal `SIGTERM` allows the server to checkpoint on shutdown. The container has a read-only root filesystem and a writable data volume.
+
+This is an optional local QA environment; it does not constitute a paid service or public deployment. Docker images and real-world network gameplay must still be tested on each target host.
+
 ## Start a world
 
 1. Extract the complete server folder to a stable location.

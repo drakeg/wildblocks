@@ -1,7 +1,7 @@
 # Wildblocks
 
 <!-- madmallard-badges:start -->
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![Electron 45.3.3](https://img.shields.io/badge/Electron%2045.3.3-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/) [![Three.js](https://img.shields.io/badge/Three.js-000000?logo=threedotjs&logoColor=white)](https://threejs.org/) [![Node.js](https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white)](https://nodejs.org/) [![Self-hosted server](https://img.shields.io/badge/Self--hosted%20server-555555?logo=serverfault&logoColor=white)](https://github.com/drakeg/wildblocks/blob/main/SERVER.md)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![Electron 45.3.3](https://img.shields.io/badge/Electron%2045.3.3-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/) [![Three.js](https://img.shields.io/badge/Three.js-000000?logo=threedotjs&logoColor=white)](https://threejs.org/) [![Node.js](https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white)](https://nodejs.org/) [![Self-hosted server](https://img.shields.io/badge/Self--hosted%20server-555555?logo=serverfault&logoColor=white)](https://github.com/drakeg/wildblocks/blob/main/SERVER.md) [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/) [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?logo=docker&logoColor=white)](https://github.com/drakeg/wildblocks/blob/main/compose.yml)
 
 [![Build and release](https://github.com/drakeg/wildblocks/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/drakeg/wildblocks/actions/workflows/build-and-release.yml) [![Latest release](https://img.shields.io/github/v/release/drakeg/wildblocks?logo=github)](https://github.com/drakeg/wildblocks/releases/latest) [![Issues](https://img.shields.io/github/issues/drakeg/wildblocks?logo=github)](https://github.com/drakeg/wildblocks/issues) [![Pull requests](https://img.shields.io/github/issues-pr/drakeg/wildblocks?logo=github)](https://github.com/drakeg/wildblocks/pulls) [![License not granted](https://img.shields.io/badge/license-UNLICENSED-555555)](https://github.com/drakeg/wildblocks/blob/main/package.json)
 <!-- madmallard-badges:end -->
@@ -13,6 +13,9 @@ An original multiplayer voxel sandbox with survival and creative modes, crafting
 Clients and standalone servers are packaged for Apple Silicon/Intel macOS, Windows x64, and Linux x64/ARM64. Native packages include their runtimes. A smaller portable server is available for systems with Node.js 24.22.1+. The game uses original code and independently licensed assets.
 
 ## Develop
+
+For an isolated, persistent dedicated-server test using Docker Compose, see [Docker Compose setup](SERVER.md#docker-compose-testing-optional). The desktop client is not containerized.
+
 
 ```sh
 npm ci
