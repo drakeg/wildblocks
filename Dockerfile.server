@@ -1,5 +1,5 @@
 # Wildblocks dedicated server: no npm dependencies or desktop runtime.
-FROM node:24-alpine
+FROM node:26-alpine
 WORKDIR /opt/wildblocks
 COPY --chown=node:node server/ ./server/
 COPY --chown=node:node dist/ ./dist/

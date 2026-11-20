@@ -4,7 +4,7 @@ This server is independent of the Wildblocks desktop app. The same server code r
 
 ## Docker Compose testing (optional)
 
-The root `compose.yml` runs **only the dedicated server**, not the Electron desktop application. It needs Docker Engine with Compose v2; the container uses Node.js 24 without downloading npm dependencies during its application build.
+The root `compose.yml` runs **only the dedicated server**, not the Electron desktop application. It needs Docker Engine with Compose v2; the container uses the official Node.js LTS major version pinned in `Dockerfile.server` without downloading npm dependencies during its application build. This image can have a newer Node.js version than the portable and bundled server downloads.
 
 ```sh
 cp .env.example .env

@@ -12,7 +12,9 @@ test('standalone container uses persistent data, local binding and non-root runt
  assert.match(compose,/read_only: true/);
  assert.match(compose,/no-new-privileges:true/);
  assert.match(compose,/stop_grace_period: 30s/);
- assert.match(docker,/FROM node:24-alpine/);
+ const nodeImage=docker.match(/^FROM node:(\d+)-alpine$/m);
+ assert(nodeImage,'use a pinned official Node.js Alpine major version');
+ assert(Number(nodeImage[1])>=24&&Number(nodeImage[1])%2===0,'use a supported even-numbered Node.js LTS line');
  assert.match(docker,/USER node/);
  assert.match(docker,/api\/status/);
  assert.match(env,/WILDBLOCKS_BIND_IP=127\.0\.0\.1/);
