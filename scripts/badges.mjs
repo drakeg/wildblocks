@@ -14,10 +14,9 @@ if(!pkg.devDependencies?.electron || !pkg.scripts?.test || !pkg.scripts?.check)t
 if(!existsSync(resolve(root,'dist/vendor/three.module.js')))throw Error('Three.js vendor module missing.');
 const encode=s=>encodeURIComponent(s).replace(/-/g,'--');
 const staticBadge=(label,color,logo,url)=>`[![${label}](https://img.shields.io/badge/${encode(label)}-${color}?logo=${logo}&logoColor=white)](${url})`;
-const electron=pkg.devDependencies.electron;
 const a=[
  staticBadge('JavaScript','F7DF1E','javascript','https://developer.mozilla.org/en-US/docs/Web/JavaScript'),
- staticBadge(`Electron ${electron}`,'47848F','electron','https://www.electronjs.org/'),
+ `[![Electron](https://img.shields.io/badge/dynamic/json?url=${encodeURIComponent(`https://raw.githubusercontent.com/${repo}/main/package.json`)}&query=${encodeURIComponent('$.devDependencies.electron')}&label=Electron&color=47848F&logo=electron&logoColor=white)](https://www.electronjs.org/)`,
  staticBadge('Three.js','000000','threedotjs','https://threejs.org/'),
  staticBadge('Node.js','5FA04E','nodedotjs','https://nodejs.org/'),
  staticBadge('Self-hosted server','555555','serverfault',`https://github.com/${repo}/blob/main/SERVER.md`),

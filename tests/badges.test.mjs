@@ -19,7 +19,8 @@ test('README badges are deterministic, version-aware and preserve prose',()=>{
    assert.equal(run([]).status,1,'drift must fail in check mode');
    assert.equal(run(['--write']).status,0);
    const first=readFileSync(readme,'utf8');
-   assert.match(first,/Electron%2045\.3\.3/);
+   assert.match(first,/badge\/dynamic\/json\?url=/);
+   assert.match(first,/devDependencies.electron/);
    assert.match(first,/Original documentation remains\./);
    assert.equal((first.match(/madmallard-badges:start/g)||[]).length,1);
    assert.match(first,/actions\/workflows\/build-and-release\.yml\/badge\.svg/);
@@ -32,9 +33,7 @@ test('README badges are deterministic, version-aware and preserve prose',()=>{
    assert.equal(run(['--write']).status,0);
    assert.equal(readFileSync(readme,'utf8'),first.replace(/\n/g,'\r\n'),'CRLF must be preserved');
    writeFileSync(join(dir,'package.json'),JSON.stringify({type:'module',license:'UNLICENSED',devDependencies:{electron:'45.4.1'},scripts:{test:'node --test',check:'node scripts/check.mjs'}}));
-   assert.equal(run([]).status,1,'dependency upgrade must invalidate version badge');
-   assert.equal(run(['--write']).status,0);
-   assert.match(readFileSync(readme,'utf8'),/Electron%2045\.4\.1/);
+   assert.equal(run([]).status,0,'Electron upgrade uses dynamic badge and must not require README rewrite');
    writeFileSync(join(dir,'Dockerfile.server'),'FROM node:24-alpine\n');
    writeFileSync(join(dir,'compose.yml'),'services: {}\n');
    assert.equal(run([]).status,1,'adding Docker Compose should invalidate the existing badges');
