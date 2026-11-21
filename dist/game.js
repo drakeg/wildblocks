@@ -1219,7 +1219,16 @@ function renderSavedServerList(){
     select.textContent=entry.name+" · "+entry.address;select.title="Use "+entry.address;select.dataset.address=entry.address;
     const remove=document.createElement("button");remove.type="button";remove.className="saved-server-remove";
     remove.textContent="Remove";remove.setAttribute("aria-label","Remove saved server "+entry.name);remove.dataset.removeAddress=entry.address;
-    row.append(select,remove);list.append(row);
+    const availability=document.createElement("span");availability.className="saved-server-status";
+    availability.textContent=window.wildblocksDesktop?.serverStatus?"Not checked":"Status unavailable in browser";
+    availability.setAttribute("role","status");
+    row.append(select,availability);
+    if(window.wildblocksDesktop?.serverStatus){
+      const check=document.createElement("button");check.type="button";check.className="saved-server-check";
+      check.textContent="Check";check.setAttribute("aria-label","Check availability of "+entry.name);
+      check.dataset.checkAddress=entry.address;row.append(check);
+    }
+    row.append(remove);list.append(row);
   }
 }
 $("save-server-button").onclick=()=>{
@@ -1233,7 +1242,18 @@ $("save-server-button").onclick=()=>{
 $("saved-servers-list").onclick=event=>{
   const remove=event.target.closest("[data-remove-address]");
   const select=event.target.closest("[data-address]");
-  if(remove){
+  const check=event.target.closest("[data-check-address]");
+  if(check){
+    const status=check.parentElement.querySelector(".saved-server-status");
+    check.disabled=true;status.textContent="Checking…";
+    window.wildblocksDesktop.serverStatus(check.dataset.checkAddress).then(result=>{
+      if(!check.isConnected)return;
+      status.textContent=result.message;status.dataset.state=result.state;
+      status.title=result.name?"World: "+result.name:"";
+    }).catch(error=>{
+      if(check.isConnected){status.textContent="Status check failed.";status.dataset.state="unknown";status.title=String(error.message||"");}
+    }).finally(()=>{if(check.isConnected)check.disabled=false;});
+  }else if(remove){
     try{removeServer(localStorage,remove.dataset.removeAddress);renderSavedServerList();$("connection-message").textContent="Saved server removed.";}
     catch(error){$("connection-message").textContent=error.message;}
   }else if(select){
