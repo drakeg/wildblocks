@@ -60,7 +60,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Verification:** Solo and server behavior, persistence and blocked-spawn tests, desktop demonstration. **Dependencies:** save reliability. **Files:** determine during refinement; split crafting, interaction and server work if needed.
 
 ### WB-007 — Rejoin a saved server (2 points)
-**Status:** In progress · first slice allows saved named addresses with no credentials, strict URL validation and removal; on-demand desktop server availability checks implemented, while full native client checks and two-client gameplay acceptance remain pending. Native macOS isolated-profile QA verified save, reload, select, remove and graceful quit on November 20; no human saves were touched.
+**Status:** In progress · first slice allows saved named addresses with no credentials, strict URL validation and removal; desktop online/offline status verified in an isolated native Electron menu against a temporary server on November 21, including shutdown detection and normal quit. Two-client gameplay acceptance and packaged binary confirmation remain pending. Native macOS isolated-profile QA verified save, reload, select, remove and graceful quit on November 20; no human saves were touched.
 **Outcome:** Players can easily reconnect to friends.
 **Acceptance draft:** Add/name/remove saved addresses without storing passwords; display reachable/unreachable status and safe errors; joining respects administrator mode.
 **Verification:** Address validation, local server unavailable/online cases and real menu interaction. **Dependencies:** None. **Files:** determine during refinement.
