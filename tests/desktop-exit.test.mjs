@@ -17,7 +17,7 @@ async function desktop(){
   }
   const dialog={showMessageBox:async(_win,options)=>{events.push({dialog:options});return {response:0};}};
   const electron={app,BrowserWindow,ipcMain:ipc,dialog,protocol:{registerSchemesAsPrivileged(){},handle(){}},net:{},utilityProcess:{},Menu:{buildFromTemplate:x=>x,setApplicationMenu(){}}};
-  const context=vm.createContext({require:name=>name==='electron'?electron:require(name),__dirname:'/tmp/wildblocks/desktop',console,URL,Response,setTimeout:(fn,ms)=>{const id=++timerId;timers.set(id,{fn,ms});return id;},clearTimeout:id=>timers.delete(id)});
+  const context=vm.createContext({require:name=>name==='electron'?electron:name==='./server-status.cjs'?{checkServerStatus:async()=>({state:'unreachable',message:'Not reachable'})}:require(name),__dirname:'/tmp/wildblocks/desktop',console,URL,Response,setTimeout:(fn,ms)=>{const id=++timerId;timers.set(id,{fn,ms});return id;},clearTimeout:id=>timers.delete(id)});
   vm.runInContext(readFileSync(new URL('../desktop/main.cjs',import.meta.url),'utf8'),context);
   await tick();
   const reply=(result,valid=true,requestId)=>{const request=events.findLast(e=>e.channel==='wildblocks:prepare-close');assert.ok(request);ipc.emit('wildblocks:checkpoint-complete',{sender:valid?window.webContents:{},senderFrame:window.webContents.mainFrame},requestId??request.id,result);};
