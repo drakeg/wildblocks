@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("wildblocksDesktop", {
   startServer: (options) => ipcRenderer.invoke("wildblocks:start", options),
   connect: (url) => ipcRenderer.invoke("wildblocks:connect", url),
+  serverStatus: (url) => ipcRenderer.invoke("wildblocks:server-status", url),
   hosting: () => ipcRenderer.invoke("wildblocks:hosting"),
   stopHosting: () => ipcRenderer.invoke("wildblocks:stop-hosting"),
   onPrepareClose: (callback) => {
