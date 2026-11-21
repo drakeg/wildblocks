@@ -26,7 +26,7 @@ async function desktopFixture() {
  const child=new EventEmitter();child.kill=()=>child.emit('exit');child.postMessage=()=>{events.push('server-stop');queueMicrotask(()=>child.emit('exit'));};
  const electron={app,BrowserWindow:Window,protocol:{registerSchemesAsPrivileged(){},handle(){}},net:{},ipcMain:ipc,utilityProcess:{fork(){queueMicrotask(()=>child.emit('message',{ready:{url:'http://127.0.0.1:4182',addresses:[]}}));return child;}},Menu:{setApplicationMenu(){},buildFromTemplate(t){return t;}}};
  const source=await readFile(new URL('../desktop/main.cjs',import.meta.url),'utf8');
- vm.runInNewContext(source,{require:name=>name==='electron'?electron:require(name),__dirname:resolve('desktop'),setTimeout,clearTimeout,URL,Promise,Response});
+ vm.runInNewContext(source,{require:name=>name==='electron'?electron:name==='./server-status.cjs'?{checkServerStatus:async()=>({state:'unreachable',message:'Not reachable'})}:require(name),__dirname:resolve('desktop'),setTimeout,clearTimeout,URL,Promise,Response});
  await tick();events.length=0;
  return {app,events,win,handlers,ack(valid=true){events.push(valid?'checkpoint-complete':'untrusted-ack');ipc.emit('wildblocks:checkpoint-complete',{sender:valid?win.webContents:{},senderFrame:win.webContents.mainFrame},requestId,{ok:true});},async cleanup(){await rm(dataDir,{recursive:true,force:true});}};
 }
