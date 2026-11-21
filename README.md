@@ -14,7 +14,7 @@ Clients and standalone servers are packaged for Apple Silicon/Intel macOS, Windo
 
 ## Saved multiplayer servers (under development)
 
-The Multiplayer menu can save and name up to 20 server addresses locally, select one to join, and remove old addresses. Passwords and login cookies are never saved in the list; server authentication still happens only on the server. Addresses must use HTTP(S) and cannot contain embedded credentials, paths or query strings. This is unreleased WB-007 functionality: online/offline indicators and complete native UI acceptance are not yet verified.
+The Multiplayer menu can save and name up to 20 server addresses locally, select one to join, and remove old addresses. Passwords and login cookies are never saved in the list; server authentication still happens only on the server. Addresses must use HTTP(S) and cannot contain embedded credentials, paths or query strings. This is unreleased WB-007 functionality: desktop-only on-demand online/offline checks are available; browser cross-origin limitations mean browser status is not asserted. Complete native interaction acceptance is pending.
 
 ## Develop
 
