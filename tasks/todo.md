@@ -15,13 +15,13 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Dependencies:** None. **Files:** sprint evidence only.
 
 ### WB-002 — Verify restore and restart in the desktop client (3 points)
-**Status:** In progress · November 13 isolated macOS Electron native test verified two-world persistence, UI backup restore/undo and moved player position/yaw across full app restart; inventory/crop interactions and screenshot review remain open.
+**Status:** In progress · November 22 isolated macOS Electron profile verified saved inventory and hunger, crop growth, facing, two-world isolation, UI backup restore/undo, and those saved fields surviving a complete Electron quit/relaunch. The state was injected into disposable QA storage and inspected read-only after restart; manual inventory/crop gameplay manipulation, an independently verified moved player position and screenshot-based visual acceptance remain open.
 **Outcome:** Players trust that a world returns to its saved state.
 **Acceptance:**
 - [ ] In a disposable slot, save distinct position/facing, inventory, hunger and crop state, fully quit, reopen and verify those values.
 - [ ] Restore a known session backup through the UI, verify it, undo the restoration before another session, and confirm a second slot remains unchanged.
 - [ ] Record screenshots/read-only diagnostics and exact steps; reproduce and fix any app defect or identify the specific automation blocker without claiming a pass.
-**Verification:** Native desktop interaction plus existing automated snapshot tests; never replace or restore a human-used slot. Stop repeated identical automation failures and report the blocker.
+**Verification:** Native Electron source QA on November 22 used a fresh disposable `--user-data-dir`, seeded two world slots with different states, reloaded, invoked the Restore button twice to verify reversibility, then quit and relaunched the same isolated profile. QA values: inventory material 30 count 1 vs backup 3; hunger 14 vs backup 7.25; crop growth 145 vs 81; yaw -0.4 vs 0.7; second world seed unchanged. Regression now checks those fields and distinct saved X coordinates across backup/undo. Full GUI gameplay interactions, visual screenshots and movement restoration still need acceptance. Never replace or restore a human-used slot.
 **Dependencies:** WB-001. **Files:** tests/world-library.test.mjs; dist/game.js only if a reproducible defect exists; sprint evidence.
 
 ### WB-003 — Protect unsaved progress during desktop exit (2 points)

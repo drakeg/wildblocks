@@ -7,6 +7,9 @@ The existing Agile history remains under `tasks/`. This file gives contributors 
 ## Sprint 1 — Save and release reliability (Nov 9–15, 2026)
 Goal: defend world saves and document release verification. WB-001 and WB-003/WB-004 technical work completed; WB-002 native inventory/crop/screenshot acceptance remains open. [v0.13.1](https://github.com/drakeg/wildblocks/releases/tag/v0.13.1) shipped as a maintenance release. Review and product acceptance are not automatically inferred from PR merges.
 
+## Sprint 1 acceptance follow-up — Save/restart QA (Nov 22, 2026)
+Native Electron isolated-profile verification now covers two saved slots, inventory and hunger values, crop growth, saved facing, UI backup restore/undo, and full app quit/relaunch. An additional regression protects distinct player coordinates and state across repeated restore/reopen. Screenshot review, actual gameplay inventory/crop manipulation and moved player-state confirmation remain open; technical source QA is not a published binary acceptance pass.
+
 ## Sprint 2 — Beds and dependable respawn (Nov 16–22, 2026)
 Goal: complete WB-006 as a verified solo and multiplayer gameplay feature, then prepare v0.14.0 if remaining checks pass.
 - Implemented in merged PRs: [bed crafting #27](https://github.com/drakeg/wildblocks/pull/27), [respawn checkpoints #29](https://github.com/drakeg/wildblocks/pull/29), [bed model #30](https://github.com/drakeg/wildblocks/pull/30).
