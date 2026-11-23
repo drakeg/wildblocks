@@ -14,7 +14,7 @@ Goal: complete WB-006 as a verified solo and multiplayer gameplay feature, then 
 - **Next:** close repeatable QA gaps using isolated worlds and server data; address workflow or dependency regressions; maintain sprint evidence. Review/retrospective pending.
 
 ## Sprint 3 — Saved multiplayer servers (planned)
-Goal: WB-007 saved server selection, secure address validation and helpful connection failures. First slice adds credential-free named address list, selection and removal. Acceptance still pending for native UI demonstration and actual online/offline feedback; game mode remains administrator-controlled.
+Goal: WB-007 saved server selection, secure address validation and helpful connection failures. First slice adds credential-free named address list, selection and removal. Desktop on-demand status checking added; native live UI and multi-client acceptance remain pending; game mode remains administrator-controlled.
 
 ## Sprint 4 — Survival depth (candidate)
 Refine WB-008 into a limited cooking/farming vertical slice, only after higher priority save, multiplayer and release issues are addressed.

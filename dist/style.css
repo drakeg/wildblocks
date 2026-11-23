@@ -885,3 +885,9 @@ body.welcome #survival-hud { display:none; }
 #saved-servers-list .saved-server-select { flex: 1; min-width: 0; overflow-wrap: anywhere; text-align: left; }
 #saved-servers-list .saved-server-remove { flex: none; }
 #save-server-button { width: 100%; margin-bottom: 6px; }
+
+.saved-server-entry { flex-wrap: wrap; }
+.saved-server-status { flex: 1 1 100%; font-size: 11px; color: #435449; overflow-wrap: anywhere; }
+.saved-server-status[data-state="online"] { color: #225e37; font-weight: 700; }
+.saved-server-status[data-state="unreachable"], .saved-server-status[data-state="invalid"] { color: #853d30; }
+.saved-server-check { flex: none; }

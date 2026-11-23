@@ -1,5 +1,7 @@
 ## Unreleased
 
+- WB-007: Add explicit desktop-only Wildblocks server availability checks with protocol validation, network timeouts, no redirects and informative online/offline results. Browser checks remain unverified rather than reporting false offline status.
+
 - WB-007: Add credential-free named saved multiplayer server addresses with selection, removal and bounded local storage; reject URLs containing credentials or unexpected path/query data. Online/offline status remains upcoming.
 
 - Release packaging: extract the official Windows Node.js runtime ZIP using Windows bsdtar instead of the PowerShell Expand-Archive path that failed on a hosted Windows runner; retry transient official runtime download failures more robustly while keeping SHA-256 verification.

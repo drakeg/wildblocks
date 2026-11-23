@@ -11,6 +11,7 @@ const {
 const path = require("node:path");
 const fs = require("node:fs");
 const { randomUUID } = require("node:crypto");
+const { checkServerStatus } = require("./server-status.cjs");
 const { pathToFileURL } = require("node:url");
 protocol.registerSchemesAsPrivileged([
   {
@@ -105,6 +106,12 @@ app.whenReady().then(() => {
   ipcMain.handle("wildblocks:local", (event) => {
     trusted(event);
     return local();
+  });
+  ipcMain.handle("wildblocks:server-status", async (event, address) => {
+    trusted(event);
+    if (!event.senderFrame.url.startsWith("wildblocks://game/"))
+      throw Error("Return to the local multiplayer menu to check server availability.");
+    return checkServerStatus(address, (...args)=>net.fetch(...args));
   });
   ipcMain.handle("wildblocks:connect", async (event, address) => {
     trusted(event);
