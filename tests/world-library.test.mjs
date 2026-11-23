@@ -90,6 +90,7 @@ test('desktop QA scenario: two worlds retain bed, crops, vitals and inventory th
   const changed=structuredClone(original);
   changed.inventory[30]=1;changed.vitals.hunger=14;changed.crops[0].growth=145;
   changed.player.yaw=-.4;
+  changed.player.position={x:34.5,y:world.surface(34,32)+.05,z:32.5};
   library.save(changed);
   const secondary=library.create('QA Unchanged',{...new World('wb002-secondary',1).snapshot(),mode:'creative'});
   library.select(farm);
@@ -102,6 +103,7 @@ test('desktop QA scenario: two worlds retain bed, crops, vitals and inventory th
   assert.equal(World.restore(recent).crops.get('30,13,29').growth,145);
   assert.equal(World.restore(recent).facing.get('32,13,30'),2);
   assert.equal(recent.player.yaw,-.4);
+  assert.equal(recent.player.position.x,34.5);
   assert.deepEqual(recent.vitals.respawnBed,{x:32,y:13,z:30});
 
   // The UI's Restore action swaps active and backup saves; invoking it twice undoes it.
@@ -110,6 +112,7 @@ test('desktop QA scenario: two worlds retain bed, crops, vitals and inventory th
   assert.equal(restored.vitals.hunger,7.25);
   assert.equal(World.restore(restored).crops.get('30,13,29').growth,81);
   assert.equal(restored.player.yaw,.7);
+  assert.equal(restored.player.position.x,32.5);
   reopened=new WorldLibrary(storage);
   assert.equal(reopened.load(farm).vitals.hunger,7.25);
   const undone=reopened.restore(farm);
@@ -117,6 +120,7 @@ test('desktop QA scenario: two worlds retain bed, crops, vitals and inventory th
   assert.equal(undone.vitals.hunger,14);
   assert.equal(World.restore(undone).crops.get('30,13,29').growth,145);
   assert.equal(undone.player.yaw,-.4);
+  assert.equal(undone.player.position.x,34.5);
   reopened=new WorldLibrary(storage);
   assert.equal(reopened.current().id,farm);
   assert.deepEqual(reopened.load(farm),changed);
