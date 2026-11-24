@@ -13,7 +13,7 @@ Native Electron isolated-profile verification now covers two saved slots, invent
 ## Sprint 2 — Beds and dependable respawn (Nov 16–22, 2026)
 Goal: complete WB-006 as a verified solo and multiplayer gameplay feature, then prepare v0.14.0 if remaining checks pass.
 - Implemented in merged PRs: [bed crafting #27](https://github.com/drakeg/wildblocks/pull/27), [respawn checkpoints #29](https://github.com/drakeg/wildblocks/pull/29), [bed model #30](https://github.com/drakeg/wildblocks/pull/30).
-- **Current verification:** native visual model review and a two-client graphical demonstration remain open; independent two-account checkpoint persistence is now integration-tested. A completed CI matrix is not proof of native UI acceptance.
+- **Current verification:** native screenshot review and a full two-client bed interaction/defeat demonstration remain open; isolated two-client native sign-in and reciprocal peer presence now verified, along with two-account checkpoint persistence integration tests. A completed CI matrix is not proof of native UI acceptance.
 - **Next:** close repeatable QA gaps using isolated worlds and server data; address workflow or dependency regressions; maintain sprint evidence. Review/retrospective pending.
 
 ## Sprint 3 — Saved multiplayer servers (planned)
