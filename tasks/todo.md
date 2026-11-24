@@ -69,3 +69,15 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 **Status:** Idea.
 **Outcome:** Survival offers more food choices with meaningful gathering and crafting progression.
 **Next refinement:** Choose one crop or recipe, define costs/nutrition and growth rules, then split into a playable vertical slice. Animals and complex farming remain separate stories.
+
+### WB-009 — Accessible creative automation and advanced crafting (size after refinement)
+**Status:** Backlog · proposed November 24, 2026; **not committed to an active Sprint**.
+**Outcome:** Encourage inventive builds with approachable triggers, switches, sensors, timers and connected devices without rare-resource grinding or confusing crafting workflows.
+**Design principles:** Start with common timber, stone and other plentiful materials; output useful component quantities per craft; provide clear in-game recipe guidance, craftable intermediate parts and intuitive placement/interaction. Expand toward wiring, logic, sensors and repeatable mechanisms progressively, rather than requiring every system up front. Preserve the option for advanced circuits for players who want complexity.
+**Candidate slices (choose during refinement):**
+1. Affordable switch/trigger operating a nearby door or mechanism with no wiring prerequisite; document what is controlled and how.
+2. Connected trigger links, simple timers and pressure-sensitive switches with obvious feedback.
+3. More complex mechanisms and logic combinations, with discoverable recipes, accessible resource acquisition and sample blueprints.
+**Acceptance criteria to refine before Sprint assignment:** A new Survival player can gather inputs, craft and place the first mechanism quickly; components work for local and server players under server authority; existing saves and inventory remain backward compatible; removal/replacement and restart preserve expected behavior; costs and usability are tested in real gameplay. Creative mode can prototype freely.
+**Dependencies:** Stability and gameplay acceptance for WB-002/WB-006, confirmed roadmap priority. **Commercialization:** Do not assert player demand or willingness to pay without evidence.
+**Process:** Requirements enter the backlog first unless they are urgent break/fix; prioritize and assign a slice in Sprint planning before merging gameplay code.
