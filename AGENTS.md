@@ -2,6 +2,11 @@
 
 These instructions apply only to `drakeg/wildblocks`. Use [Mad Mallard repository standards](https://github.com/drakeg/madmallard-repository-standards) as a voluntary reference; Wildblocks' save-safety, original assets, desktop packaging, and server security rules take precedence. Never inspect unrelated repositories except this explicitly named standards reference.
 
+## Requirement intake and Sprint discipline
+- Record new feature requests in `tasks/todo.md` and `BACKLOG.md` first. Scope and prioritize them; assign a Sprint explicitly before implementing gameplay code.
+- Do not interrupt active-Sprint acceptance tasks for new features. Confirmed break/fix (security, data loss, failing CI, critical regressions) may interrupt immediately.
+- An exploratory feature branch is not authorization to merge or release that feature. Keep unfinished work isolated until planned.
+
 ## Delivery loop
 - Build → deploy to an **isolated** desktop or dedicated-server test environment → test real gameplay → fix → retest. Continue with the next ready backlog item within the authorized session; never claim autonomous work outside a session.
 - Fix failing CI, save loss, security failures, and broken builds before cosmetic or speculative features. Preserve player worlds, server accounts, backups, and persistent data.
