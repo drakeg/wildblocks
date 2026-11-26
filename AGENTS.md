@@ -19,7 +19,7 @@ These instructions apply only to `drakeg/wildblocks`. Use [Mad Mallard repositor
 - Place the two-row Shields.io block immediately below the README H1, bounded by `madmallard-badges` markers.
 - Technology claims are based on `package.json`, `dist/vendor/three.module.js`, and actual workflow configuration. The release, CI, issue, and PR badges must remain dynamic. A CI badge does not imply every manual platform smoke test passed.
 - Run `node scripts/badges.mjs --write` when a technology or version changes, and `node scripts/badges.mjs` to validate. The CI build's `npm run check` enforces drift detection.
-- `package.json` declares `UNLICENSED`. **Do not claim open-source licensing** or add a license badge representing a granted OSI license unless the owner explicitly chooses a license.
+- The repository has an owner-selected MIT `LICENSE` file and `package.json` must declare `MIT`; the single dynamic GitHub license badge reflects that. Never change licensing without explicit owner authorization.
 - Never hardcode a passing test/security status. Badge validation does not substitute for tests or audits.
 
 ## Security, release, and business scope
