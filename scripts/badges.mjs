@@ -9,7 +9,7 @@ const repo='drakeg/wildblocks';
 const pkg=JSON.parse(readFileSync(resolve(root,'package.json'),'utf8'));
 const workflow=resolve(root,'.github/workflows/build-and-release.yml');
 if(!existsSync(workflow))throw Error('Build and release workflow not found; review badge claims.');
-if(pkg.license!=='UNLICENSED')throw Error('License metadata changed; review badge and licensing policy before proceeding.');
+if(pkg.license!=='MIT' || !existsSync(resolve(root,'LICENSE')) || !readFileSync(resolve(root,'LICENSE'),'utf8').startsWith('MIT License'))throw Error('MIT manifest license and LICENSE file must agree before badges are generated.');
 if(!pkg.devDependencies?.electron || !pkg.scripts?.test || !pkg.scripts?.check)throw Error('Expected Electron/test/check manifest entries missing.');
 if(!existsSync(resolve(root,'dist/vendor/three.module.js')))throw Error('Three.js vendor module missing.');
 const encode=s=>encodeURIComponent(s).replace(/-/g,'--');
@@ -30,7 +30,7 @@ const b=[
  `[![Latest release](https://img.shields.io/github/v/release/${repo}?logo=github)](https://github.com/${repo}/releases/latest)`,
  `[![Issues](https://img.shields.io/github/issues/${repo}?logo=github)](https://github.com/${repo}/issues)`,
  `[![Pull requests](https://img.shields.io/github/issues-pr/${repo}?logo=github)](https://github.com/${repo}/pulls)`,
- `[![License not granted](https://img.shields.io/badge/license-UNLICENSED-555555)](https://github.com/${repo}/blob/main/package.json)`
+ `[![License](https://img.shields.io/github/license/${repo}?logo=github)](https://github.com/${repo}/blob/main/LICENSE)`
 ].join(' ');
 const content=`${start}\n${a}\n\n${b}\n${end}`;
 const readmePath=resolve(root,'README.md');
