@@ -1,5 +1,7 @@
 ## Unreleased
 
+- WB-006: Correct multiplayer defeat/respawn notice to distinguish a valid personal bed landing from camp fallback, while preserving inventory and server authority. Native two-client R-to-bind-bed acceptance verified using disposable profiles on November 26.
+
 - WB-007: Add explicit desktop-only Wildblocks server availability checks with protocol validation, network timeouts, no redirects and informative online/offline results. Browser checks remain unverified rather than reporting false offline status.
 
 - WB-007: Add credential-free named saved multiplayer server addresses with selection, removal and bounded local storage; reject URLs containing credentials or unexpected path/query data. Online/offline status remains upcoming.
