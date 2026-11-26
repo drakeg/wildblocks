@@ -19,7 +19,7 @@
   "main": "desktop/main.cjs",
   "description": "An original multiplayer voxel sandbox with crafting, survival, creative building, and self-hosted servers.",
   "author": "Wildblocks",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/drakeg/wildblocks.git"
