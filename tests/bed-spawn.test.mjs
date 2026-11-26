@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from '../dist/world.js';
-import { bindBed, bedLanding, respawnLocation, savedBed } from '../dist/bed-spawn.js';
+import { bindBed, bedLanding, respawnLocation, savedBed, respawnNotice } from '../dist/bed-spawn.js';
 import { Survival, playerVitals } from '../dist/survival.js';
 import { vitalsSnapshot } from '../dist/food.js';
 
@@ -51,4 +51,19 @@ test('fatal creature damage respawns beside a valid bed',()=>{
  s.monsters=[{id:1,position:{x:32.5,y:13.05,z:31.6},velocity:{x:0,y:0,z:0},health:12,attack:0}];
  s.update(w,.05,[player]);
  assert.equal(v.respawns,1);assert.deepEqual(player.position,{x:32.5,y:13.05,z:31.5});
+});
+
+test('respawn message identifies actual bed landing and camp fallback accurately',()=>{
+ const w=bedroom(),v=playerVitals();
+ assert(bindBed(w,v,{x:32,y:13,z:30}));
+ const beside=bedLanding(w,v.respawnBed);
+ assert.match(respawnNotice(w,beside,v),/beside your bed/);
+ assert.match(respawnNotice(w,{...beside,z:beside.z+0.5},v),/at camp/);
+ for(const [dx,dz] of [[0,1],[1,0],[0,-1],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]])
+   assert(w.set(32+dx,13,30+dz,7));
+ assert.equal(bedLanding(w,v.respawnBed),null);
+ assert.match(respawnNotice(w,respawnLocation(w,v),v),/at camp/);
+ w.set(32,13,30,0);
+ assert.match(respawnNotice(w,respawnLocation(w,v),v),/at camp/);
+ assert.match(respawnNotice(w,{x:NaN,y:13.05,z:31.5},v),/at camp/);
 });

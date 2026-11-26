@@ -26,3 +26,12 @@ export function bindBed(world,vitals,hit) {
 export function respawnLocation(world,vitals) {
   return bedLanding(world,vitals.respawnBed) ?? {x:32.5,y:world.surface(32,32)+.05,z:32.5};
 }
+
+export function respawnNotice(world,position,vitals) {
+  const landing=bedLanding(world,vitals?.respawnBed);
+  const atBed=landing && position && ['x','y','z'].every(axis=>
+    Number.isFinite(position[axis]) && Math.abs(position[axis]-landing[axis])<=0.15);
+  return atBed
+    ? 'You respawned beside your bed. Your inventory is safe.'
+    : 'You were rescued at camp. Your inventory is safe.';
+}

@@ -1,7 +1,7 @@
 import { WorldLibrary } from "./world-library.js";
 import { normalizeServerAddress, readSavedServers, saveServer, removeServer } from "./saved-servers.js";
 import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
-import { bindBed } from "./bed-spawn.js";
+import { bindBed, respawnNotice } from "./bed-spawn.js";
 import { BED_PIECES, bedVertex } from "./bed-model.js";
 import { farmAction, updateCrops, cropStage } from "./farming.js";
 import { canReachContainer, containerView, transferContainer } from "./interactions.js";
@@ -1041,7 +1041,7 @@ function applyServerState(state, initial = false) {
   remoteSurvival = state.survival;
   const respawned = state.player.vitals?.respawns !== vitals.respawns;
   vitals = {...vitals,...state.player.vitals};
-  if(respawned && !initial){Object.assign(position,state.player.position);velocity.y=0;toast("You were rescued at camp. Your inventory is safe.");}
+  if(respawned && !initial){Object.assign(position,state.player.position);velocity.y=0;toast(respawnNotice(world,state.player.position,state.player.vitals));}
   mode = state.mode === "creative" ? "creative" : "survival";
   serverModeLabel(mode);
   $("mode").value = mode;
