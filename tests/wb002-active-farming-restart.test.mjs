@@ -19,7 +19,8 @@ test('real till/plant/growth/eat actions survive save, restart, backup restore, 
  let library=open(),world=new World('wb002-real-farm',1);
  const plot={x:32,y:12,z:30,id:1,distance:3};
  world.set(plot.x,plot.y,plot.z,1);
- world.set(plot.x,plot.y+1,plot.z,0);
+ // Choose an exposed crop plot irrespective of terrain generation or canopy.
+ for(let y=plot.y+1;y<40;y++)world.set(plot.x,y,plot.z,0);
  const bag=new Gathering(),tools=new Set(['timber-hoe']),skills=new Progression();
  assert(bag.add(31,2),'two seeds');
  assert(bag.add(30,1),'one bread');
