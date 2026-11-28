@@ -74,6 +74,12 @@ export function main() {
       '-f','merge_method=merge','-f',`sha=${pr.head.sha}`]);
     if (!result.merged) throw Error(`GitHub refused PR #${pr.number} merge`);
     console.log(`PR #${pr.number} merged as ${result.sha}`);
+    // Merges made with GITHUB_TOKEN do not start ordinary push workflows.
+    // workflow_dispatch is an explicit supported exception: verify merged main.
+    execFileSync('gh',['workflow','run','build-and-release.yml','--repo',repo,'--ref','main'],{
+      env:process.env,encoding:'utf8',maxBuffer:1024*1024
+    });
+    console.log('Queued fresh post-merge main build/release validation.');
   }
 }
 if (process.argv[1] && fileURLToPath(import.meta.url)===process.argv[1]) main();
