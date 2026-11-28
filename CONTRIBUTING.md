@@ -12,6 +12,9 @@ Use a supported Node.js runtime with npm, then run `npm ci`, `npm run check`, an
 4. Run `npm run check` (includes badge validation), `npm test`, and `npm audit --audit-level=high` where dependencies are installed. Report the exact results; CI must pass before merging.
 5. Update documentation, changelog/release notes if a player-visible change is included, and relevant sprint evidence. Describe security, risk, rollback and migration impact in the PR.
 
+## Automatic merging
+Ready, same-repository PRs from the repository owner or Renovate are eligible for automatic merging **after** the full `Build and release` pull-request workflow succeeds. The workflow checks the exact current head and base commits and relies on GitHub to enforce branch rules and reviews. Set the PR label `no-automerge` or `requires-manual-review` for manual review. PRs from external contributors and forks remain manual. Failed or outdated CI does not merge; push an updated branch and obtain fresh green checks. This is a CI-success merge workflow; GitHub's native auto-merge toggle remains available if the repository is configured with required merge gates.
+
 ## Badges and documentation
 The root README badge block is owned by `scripts/badges.mjs`, which verifies the real manifest/workflow before generating it. After a verified technology/version change run `node scripts/badges.mjs --write`; CI checks for drift via `npm run check`. Never add fake build, test, security or license badges. Follow the project-specific guidance in [AGENTS.md](AGENTS.md).
 
