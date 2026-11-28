@@ -1,0 +1,28 @@
+name: Auto-merge trusted PRs after full CI
+
+on:
+  workflow_run:
+    workflows: ["Build and release"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      # Default-branch code only: never checkout or execute the PR branch here.
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '26.13.1'
+      - name: Verify successful CI and merge current trusted PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci-automerge.mjs
