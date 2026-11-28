@@ -32,6 +32,7 @@ Status: Ready, In progress, Blocked, Review, Done. Points are relative scope. Pr
 - [x] On confirmed save failure, preserve the open session and offer a clear retry/export path; normal quit still completes when saving succeeds.
 - [x] Meaningful tests cover failed and successful checkpoints, including hosted-server shutdown sequencing if changed.
 **Verification:** Inspect desktop/preload.cjs and desktop/main.cjs with dist/game.js saveSession; focused automated tests and native failure/retry check. Do not fill human storage to simulate failure.
+**November 28 follow-up break/fix:** The multiplayer Sign Out button previously swallowed checkpoint/logout errors and falsely reported successful sign-out. A focused fix now awaits the checkpoint before logout, preserves the connected session on failure, displays retry guidance, and prevents double submission. Automated success/failure order tests added; CI and native UI acceptance pending.
 **Dependencies:** None; may proceed if WB-002 is blocked. **Files:** desktop/main.cjs, desktop/preload.cjs, dist/game.js, focused tests. Split if investigation exceeds this size.
 
 ### WB-004 — Record repeatable release checks (1 point)
