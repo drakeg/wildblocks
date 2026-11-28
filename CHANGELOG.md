@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Fix the welcome screen displaying 0.13.0 when the published package is 0.13.1; require displayed and manifest versions to match in CI before future releases.
+
 - WB-003: Multiplayer sign-out no longer silently ignores failed final saves or logout requests; shows an actionable error without claiming the account signed out. Includes regression tests for checkpoint ordering and failures.
 
 - WB-006: Correct multiplayer defeat/respawn notice to distinguish a valid personal bed landing from camp fallback, while preserving inventory and server authority. Native two-client R-to-bind-bed acceptance verified using disposable profiles on November 26.
