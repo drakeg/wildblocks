@@ -22,6 +22,9 @@ Goal: complete WB-006 as a verified solo and multiplayer gameplay feature, then 
 - **Current verification:** native screenshot review and a full two-client graphical defeat demonstration remain open; two isolated native clients now verified real R interactions to bind their own Woven beds on November 26; deterministic two-player fatal combat and bed/camp fallback are now regression tested; isolated two-client native sign-in and reciprocal peer presence now verified, along with two-account checkpoint persistence integration tests. A completed CI matrix is not proof of native UI acceptance.
 - **Next:** close repeatable QA gaps using isolated worlds and server data; address workflow or dependency regressions; maintain sprint evidence. Review/retrospective pending.
 
+## Sprint 2 reliability follow-up — Multiplayer sign-out (Nov 28, 2026)
+Fixed a discovered WB-003 save-safety regression: a multiplayer Sign Out had shown a false success after failed checkpoint/logout calls. Sign-out now requires a confirmed checkpoint and successful logout; failures remain visible and retryable. Automated regression tests and CI pending. No unrelated feature work was introduced.
+
 ## Sprint 3 — Saved multiplayer servers (planned)
 Goal: WB-007 saved server selection, secure address validation and helpful connection failures. First slice adds credential-free named address list, selection and removal. Desktop on-demand status checking added; native live UI and multi-client acceptance remain pending; game mode remains administrator-controlled.
 

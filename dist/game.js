@@ -3,6 +3,7 @@ import { normalizeServerAddress, readSavedServers, saveServer, removeServer } fr
 import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
 import { bindBed, respawnNotice } from "./bed-spawn.js";
 import { gameplayDiagnostics } from "./gameplay-diagnostics.js";
+import { checkpointBeforeLogout } from "./signout.js";
 import { BED_PIECES, bedVertex } from "./bed-model.js";
 import { farmAction, updateCrops, cropStage } from "./farming.js";
 import { canReachContainer, containerView, transferContainer } from "./interactions.js";
@@ -1196,15 +1197,24 @@ $("account-password").onkeydown = (e) => {
   }
 };
 $("logout-button").onclick = async () => {
-  showWelcome();
+  const button=$("logout-button");
+  if(button.disabled)return;
+  button.disabled=true;
   try {
-    await saveSession();
-    await network.request("logout", {});
-  } catch {}
-  connected = false;
-  clearInterval(pollTimer);
-  serverControls();
-  $("network-message").textContent = "Signed out.";
+    await checkpointBeforeLogout(saveSession,()=>network.request("logout",{}));
+    clearInterval(pollTimer);
+    connected=false;
+    showWelcome();
+    serverControls();
+    $("network-message").textContent="Signed out.";
+  } catch (error) {
+    const message="Sign-out could not be confirmed: "+String(error?.message||"Save failed.")+
+      ". Your game remains open; try again or reconnect.";
+    $("network-message").textContent=message;
+    toast(message);
+  } finally {
+    button.disabled=false;
+  }
 };
 $("single-player").onclick = async () => {
   if(window.wildblocksDesktop)return window.wildblocksDesktop.local();
