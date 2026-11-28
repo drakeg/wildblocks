@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mergeEligibility} from '../scripts/ci-automerge.mjs';
+import {mergeEligibility,completeJobMatrix,REQUIRED_PR_JOBS} from '../scripts/ci-automerge.mjs';
 const sha='a'.repeat(40), base='b'.repeat(40),repo='drakeg/wildblocks';
 function fixture(){
  const candidate={number:49,head:{sha,repo:{id:7}},base:{sha:base}};
@@ -43,4 +43,14 @@ test('refuses failed, incomplete, outdated, or unrelated checks',()=>{
    f=>f.event.repository.full_name='someone/else',
    f=>f.candidate.number=48
  ]){const f=fixture();mutation(f);assert.notEqual(mergeEligibility(f.event,f.pr,f.candidate),null);}
+});
+
+test('auto-merge requires every packaging and Docker job to complete successfully',()=>{
+ const passed=REQUIRED_PR_JOBS.map(name=>({name,status:'completed',conclusion:'success'}));
+ assert.equal(passed.length,7);
+ assert.equal(completeJobMatrix(passed),true);
+ assert.equal(completeJobMatrix(passed.slice(1)),false);
+ assert.equal(completeJobMatrix([...passed.slice(0,1),{...passed[1],conclusion:'skipped'},...passed.slice(2)]),false);
+ assert.equal(completeJobMatrix([...passed.slice(0,1),{...passed[1],status:'in_progress',conclusion:null},...passed.slice(2)]),false);
+ assert.equal(completeJobMatrix(null),false);
 });
