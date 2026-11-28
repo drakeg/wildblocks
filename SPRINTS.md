@@ -13,6 +13,9 @@ Native Electron isolated-profile verification now covers two saved slots, invent
 ## Sprint 1 acceptance follow-up — Production farming-to-save regression (Nov 28, 2026)
 Added a focused test for actual production till/plant/crop-growth/eat actions, then saving and reloading inventory, hunger, player position/facing, and crop growth, followed by reversible backup restore/undo and second-world isolation. CI pending; no new native graphical demonstration or manual release-binary pass is claimed.
 
+## Sprint 1 native QA instrumentation (Nov 28, 2026)
+Extend the existing read-only `window.wildblocksState` QA hook to expose exact facing, hunger, inventory and crop growth as defensive copies without authentication data. Native GUI acceptance and screenshots remain open; no saved data is mutated by diagnostics.
+
 ## Sprint 2 — Beds and dependable respawn (Nov 16–22, 2026)
 Goal: complete WB-006 as a verified solo and multiplayer gameplay feature, then prepare v0.14.0 if remaining checks pass.
 - Implemented in merged PRs: [bed crafting #27](https://github.com/drakeg/wildblocks/pull/27), [respawn checkpoints #29](https://github.com/drakeg/wildblocks/pull/29), [bed model #30](https://github.com/drakeg/wildblocks/pull/30).

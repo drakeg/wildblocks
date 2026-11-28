@@ -2,6 +2,7 @@ import { WorldLibrary } from "./world-library.js";
 import { normalizeServerAddress, readSavedServers, saveServer, removeServer } from "./saved-servers.js";
 import { FOOD, MAX_HUNGER, CROP_SECONDS, eatFood, vitalsSnapshot } from "./food.js";
 import { bindBed, respawnNotice } from "./bed-spawn.js";
+import { gameplayDiagnostics } from "./gameplay-diagnostics.js";
 import { BED_PIECES, bedVertex } from "./bed-model.js";
 import { farmAction, updateCrops, cropStage } from "./farming.js";
 import { canReachContainer, containerView, transferContainer } from "./interactions.js";
@@ -1398,6 +1399,7 @@ Object.defineProperty(window, "wildblocksState", {
     seed: world.seed,
     edits: world.edits.size,
     position: { ...position },
+    ...gameplayDiagnostics({world,bag:gathering,vitals,yaw,pitch,mode,worldId:connected?null:library?.current()?.id}),
     meshes: meshes.size,
     selected,
     grounded,
