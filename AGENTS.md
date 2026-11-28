@@ -15,6 +15,13 @@ These instructions apply only to `drakeg/wildblocks`. Use [Mad Mallard repositor
 - Avoid paid deployments and public server exposure by default; dedicated servers are locally bound unless deliberately configured otherwise. Use disposable user-data profiles for desktop QA and temporary server data directories for integration tests.
 - Maintain README, AGENTS, CONTRIBUTING, SPRINTS, BACKLOG, RELEASES, SECURITY and CHANGELOG in the same PR when relevant. Major gameplay changes should preserve previous save formats or include a safe migration.
 
+## Check-gated PR auto-merge
+- The repository setting `allow_auto_merge` is enabled. GitHub's built-in **Enable auto-merge** requires an unmet required check/review; on a fully clean PR with no pending merge gate, GitHub may reject arming it.
+- The default-branch `.github/workflows/auto-merge.yml` handles this without bypassing checks: it runs only when the entire **Build and release** pull-request workflow completed successfully, fetches the current PR from GitHub, verifies the exact tested head SHA, matching target-base SHA, and permits only same-repository, non-draft PRs authored by `drakeg` or `renovate[bot]`.
+- Do not auto-merge external/fork PRs or override GitHub-protected reviews. Add `no-automerge` or `requires-manual-review` to opt out before CI finishes. Any failed/missing CI, changed head, or advanced base must stop merge and require fresh successful CI.
+- GitHub still enforces repository rules; if merge permission or required review prevents the workflow's merge, fix settings or reviews rather than bypassing them. Review branch protection/rulesets in GitHub Settings periodically; the connected GitHub App may not have administrative access to read these.
+- The post-CI workflow takes effect only once merged to `main`. It cannot retroactively merge PRs whose runs finished before activation; rerun CI on their updated branch.
+
 ## README badges
 - Place the two-row Shields.io block immediately below the README H1, bounded by `madmallard-badges` markers.
 - Technology claims are based on `package.json`, `dist/vendor/three.module.js`, and actual workflow configuration. The release, CI, issue, and PR badges must remain dynamic. A CI badge does not imply every manual platform smoke test passed.
