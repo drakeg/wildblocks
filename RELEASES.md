@@ -46,7 +46,7 @@ Packages are portable distributions, not auto-updating installers. Native build 
 
 Copy this checklist into the release PR or sprint evidence. A blank check is unverified, not an assumed pass.
 
-- [ ] Record version, source commit, PR head and release/tag URL. Ensure package.json, lockfile, menu and release notes agree; preserve published downloads.
+- [ ] Record version, source commit, PR head and release/tag URL. Ensure package.json, lockfile, menu and release notes agree; preserve published downloads. `npm run check` enforces the visible menu version matching package.json.
 - [ ] Run relevant focused tests, full tests, syntax checks and dependency audit. Record counts, failures and accepted limitations; check CI for the actual head.
 - [ ] Confirm native builds for macOS arm64/x64, Windows x64, Linux arm64/x64, plus the portable server. Record the packaging workflow URL and all job conclusions.
 - [ ] Confirm all 11 package assets and SHA256SUMS.txt are uploaded and nonempty. Compare every manifest row with its asset digest. If packages are downloaded, also hash those downloaded bytes; metadata comparison alone does not claim a local launch.
