@@ -30,6 +30,20 @@ export function mergeEligibility(event, pr, candidate) {
     return 'Base branch advanced since successful CI; rerun checks';
   return null;
 }
+export const REQUIRED_PR_JOBS = [
+  'Test and package (macos-arm64)',
+  'Test and package (macos-x64)',
+  'Test and package (windows-x64)',
+  'Test and package (linux-x64)',
+  'Test and package (linux-arm64)',
+  'Portable server source package',
+  'Docker Compose dedicated-server smoke'
+];
+export function completeJobMatrix(jobs) {
+  if (!Array.isArray(jobs)) return false;
+  return REQUIRED_PR_JOBS.every(name=>jobs.some(j=>j.name===name &&
+    j.status==='completed' && j.conclusion==='success'));
+}
 function gh(args) {
   return JSON.parse(execFileSync('gh',['api',...args],{
     env:process.env,encoding:'utf8',maxBuffer:8*1024*1024
@@ -49,7 +63,12 @@ export function main() {
     const pr=gh([`repos/${repo}/pulls/${candidate.number}`]);
     const reason=mergeEligibility(event,pr,candidate);
     if (reason) {console.log(`PR #${candidate.number}: ${reason}`);continue;}
-    console.log(`PR #${pr.number}: full CI passed at ${pr.head.sha}; requesting protected merge.`);
+    const jobs=gh([`repos/${repo}/actions/runs/${run.id}/jobs?per_page=100`]).jobs;
+    if (!completeJobMatrix(jobs)) {
+      console.log(`PR #${pr.number}: required packaging, audit, or Docker job missing/not green; no merge.`);
+      continue;
+    }
+    console.log(`PR #${pr.number}: all seven jobs green at ${pr.head.sha}; requesting protected merge.`);
     // GitHub enforces existing required checks/reviews/rulesets; no admin bypass.
     const result=gh(['-X','PUT',`repos/${repo}/pulls/${pr.number}/merge`,
       '-f','merge_method=merge','-f',`sha=${pr.head.sha}`]);
