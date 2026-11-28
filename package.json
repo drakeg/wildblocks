@@ -12,7 +12,7 @@
     "package:release": "node scripts/package-release.mjs"
   },
   "devDependencies": {
-    "@electron/packager": "20.3.0",
+    "@electron/packager": "20.3.1",
     "electron": "45.5.0"
   },
   "version": "0.13.1",
